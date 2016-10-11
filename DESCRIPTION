@@ -1,0 +1,20 @@
+Package: NBCD
+Type: Package
+Title: Naive Bayes for Online Classification with Concept Drift
+Version: 0.1.0
+Author: Philipp Aschersleben
+Maintainer: Philipp Aschersleben <aschersleben@statistik.tu-dortmund.de>
+Description: Naive Bayes for Online Classification with Concept Drift.
+    A master's thesis project.
+License: GPL-3
+LazyData: TRUE
+LinkingTo: Rcpp
+Imports:
+    Rcpp,
+    e1071,
+    checkmate,
+    ggplot2,
+    mvtnorm,
+    mlbench,
+    BBmisc
+RoxygenNote: 5.0.1

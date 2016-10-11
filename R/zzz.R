@@ -1,0 +1,12 @@
+#' @useDynLib NBCD
+#' @import checkmate
+#' @import ggplot2
+#' @importFrom utils tail head capture.output
+#' @importFrom stats lm predict.lm predict dnorm
+#' @importFrom graphics image points
+#' @importFrom grDevices grey.colors rgb col2rgb
+#' @importFrom mvtnorm rmvnorm
+#' @importFrom Rcpp sourceCpp
+#' @importFrom BBmisc pause
+#' @importFrom mlbench mlbench.smiley mlbench.2dnormals
+NULL
