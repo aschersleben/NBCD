@@ -66,9 +66,11 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   }
 
   if (verbose) {
-    if (inherits(try(get("cat.flag", envir = .GlobalEnv), silent = TRUE), "try-error"))
-      assign("cat.flag", TRUE, envir = .GlobalEnv)
-    if (cat.flag)
+    if (inherits(try(is.environment(.NBCD), silent = TRUE), "try-error"))
+      .NBCD <- new.env()
+    if (inherits(try(get("cat.flag", envir = .NBCD), silent = TRUE), "try-error"))
+      assign("cat.flag", TRUE, envir = .NBCD)
+    if (get("cat.flag", pos = .NBCD))
       cat("makeNBCDmodel: ")
   }
 
@@ -127,9 +129,9 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   curr.model$general$time.last <- max(unlist(curr.model$general$time), na.rm = TRUE)
 
   if (verbose) {
-    if (cat.flag) {
+    if (get("cat.flag", pos = .NBCD)) {
       cat("Obs. in model:", "")
-      assign("cat.flag", FALSE, envir = .GlobalEnv)
+      assign("cat.flag", FALSE, envir = .NBCD)
     }
     cat(paste0(curr.model$general$nobs, ", "))
   }
@@ -195,7 +197,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
       model$old <- old.model
       if (verbose) {
         cat("reset model for", i, "")
-        assign("cat.flag", TRUE, envir = .GlobalEnv)
+        assign("cat.flag", TRUE, envir = .NBCD)
       }
     }
   }
@@ -203,7 +205,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   if (!init.flag)
     model$current$general$init <- FALSE
 
-  if (verbose && cat.flag)
+  if (verbose && get("cat.flag", pos = .NBCD))
     cat("\n")
 
   return(structure(model, class = "NBCD"))
