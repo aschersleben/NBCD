@@ -5,9 +5,9 @@ is able to handle concept drift. Furthermore, it comes with extended Naive Bayes
 functions, that can be printed, plotted, predicted and updated (see below). The
 same holds for the NBCD method.
 
-<!--
 [![Travis-CI Build Status](https://travis-ci.org/aschersleben/NBCD.svg?branch=master)](https://travis-ci.org/aschersleben/NBCD)
--->
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/aschersleben/NBCD?branch=master&svg=true)](https://ci.appveyor.com/project/aschersleben/NBCD)
+
 
 
 ## Installation:
