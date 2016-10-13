@@ -2,26 +2,36 @@
 % Please edit documentation in R/misc.R
 \name{getWaitingTime}
 \alias{getWaitingTime}
-\title{Wrapper for kMcpp.}
+\title{Waiting Time Calculation}
 \usage{
 getWaitingTime(x, max.len = 10)
 }
 \arguments{
-\item{x}{Probabilities for which to calculate the mean waiting time.}
+\item{x}{\code{[numeric]}\cr
+Probabilities for which to calculate the mean waiting time.}
 
-\item{max.len}{Controls calculation time. If x is longer than max.len, the waiting time will
-be approximated: x then just contains the (max.len - 1) smallest values and
+\item{max.len}{\code{[numeric(1)]}\cr
+Controls calculation time. If x is longer than max.len, the waiting time will
+be approximated: x then just contains the \eqn{max.len-1} smallest values and
 the sum of all others. Default is 10.}
 }
 \value{
-[numeric(1)]
-Mean waiting time.
+\code{[numeric(1)]} Mean waiting time.
 }
 \description{
-Wrapper for kMcpp.
+Calculates the mean waiting time for a special absorbing markov chain
+(directed acyclic graph) that is based on an n-point-distribution. The value
+of this function answers the question:\cr\cr
+"How long do I have to wait (on average) until every
+value of a discrete distribution (with a finite set of values) appears
+\emph{at least} once?"\cr\cr
+Uses \code{Rcpp} with memoization for faster calculations, but the problem
+is still \eqn{O(2^n)}: 0.2s for \code{length(x) = 15}, and 11s
+for \code{length(x) = 20}. An approximation approach is given, see argument
+\code{"max.len"}.
 }
 \examples{
-# Throw a die - how long till every number...
+# How long until every side of a dice appears at least once (on average)?
 getWaitingTime(rep(1/6, 6))
 
 # Approximation:
@@ -30,6 +40,7 @@ set.seed(1909)
 tmp <- probnorm(runif(18))
 system.time(print(getWaitingTime(tmp, max.len = 18)))
 system.time(print(getWaitingTime(tmp, max.len = 10)))
+system.time(print(getWaitingTime(tmp, max.len = 5)))
 }
 
 }

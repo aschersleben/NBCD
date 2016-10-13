@@ -7,15 +7,18 @@
 updateVarYC(x, object = NULL)
 }
 \arguments{
-\item{x}{[numeric]
+\item{x}{\code{[numeric]}\cr
 vector (finite, no missing values)}
 
-\item{object}{[list | NULL]
-list from updateVarYC or NULL}
+\item{object}{\code{[ycVar | NULL]}\cr
+list (object from updateVarYC) or NULL}
 }
 \value{
-[list(1)]
-  $var: variance of x via Youngs-Cramer-algorithm
+\code{[ycVar]}\cr
+  \itemize{
+    \item \code{$var}: (updated) variance via Youngs-Cramer-algorithm
+    \item \code{$n}: number of included elements
+  }
 }
 \description{
 Variance calculation (updatable) by Youngs and Cramer
@@ -38,14 +41,14 @@ Variance calculation (updatable) by Youngs and Cramer
 }
 \examples{
 \dontrun{
-  yc.fun = function(x) {
-    yc = NULL
-    for (i in seq_along(x)) {
-      yc = NBCD:::updateVarYC(x[i], yc)
-    }
-    return(yc$var)
+yc.fun = function(x) {
+  yc = NULL
+  for (i in seq_along(x)) {
+    yc = NBCD:::updateVarYC(x[i], yc)
   }
-  yc.fun(1:10)
+  return(yc$var)
+}
+yc.fun(1:10)
 }
 
 }
@@ -53,7 +56,5 @@ Variance calculation (updatable) by Youngs and Cramer
 Youngs, Edward A., and Elliot M. Cramer. "Some results relevant to choice of
 sum and sum-of-product algorithms." Technometrics 13.3 (1971): 657--665,
 \href{http://dx.doi.org/10.2307/1267176}{DOI:10.2307/1267176}.
-See also:
-\url{http://scholar.google.de/scholar?cluster=10728821699746172437&hl=de}
 }
 

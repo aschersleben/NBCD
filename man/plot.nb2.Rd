@@ -8,30 +8,30 @@
   class.name = "class", gg = TRUE, ...)
 }
 \arguments{
-\item{x}{[nb2]
+\item{x}{\code{[nb2]}\cr
 A Naive Bayes Model}
 
-\item{xlim, ylim}{[numeric(2)]}
+\item{xlim, ylim}{\code{[numeric(2)]}\cr}
 
-\item{features}{[numeric(2) | character(2)]
+\item{features}{\code{[numeric(2) | character(2)]}\cr
 If missing, the first two features are plotted.}
 
-\item{sdevs}{[numeric(1)]
+\item{sdevs}{\code{[numeric(1)]}\cr
 If missing(xlim) & missing(ylim): How many standard deviations from the mean
 in x and y direction.}
 
-\item{gridsize}{[numeric(1)]
+\item{gridsize}{\code{[numeric(1)]}\cr
 Size of grid to be predicted and plotted.}
 
-\item{data}{[list | data.frame]
+\item{data}{\code{[list | data.frame]}\cr
 List with elements "x" and "class" or data.frame (then see argument
 class.name).}
 
-\item{class.name}{[character]
+\item{class.name}{\code{[character]}\cr
 If data is data.frame, then give the class' column name here.
 Default: \code{"class"}.}
 
-\item{gg}{[logical]}
+\item{gg}{\code{[logical]}\cr}
 
 \item{...}{Currently ignored.}
 }
@@ -69,5 +69,9 @@ plot(mod2, features = c(1, 3), xlim = c(4, 8), ylim = c(0, 8)) +
   data = iris2, size = 2) +
   guides(colour = FALSE, shape = FALSE)
 
+}
+\seealso{
+\code{\link{nb2}}, \code{\link{update.nb2}},
+\code{\link{print.nb2}}, \code{\link{predict.nb2}}
 }
 

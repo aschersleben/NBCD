@@ -7,13 +7,13 @@
 resetModel(model, var.name)
 }
 \arguments{
-\item{model}{[NBCD]
+\item{model}{\code{[NBCD]}\cr
 "model$current"}
 
-\item{var.name}{[character]}
+\item{var.name}{\code{[character]}\cr}
 }
 \value{
-[NBCD]
+\code{[NBCD]}\cr
   NBCD model with resetted "current" part.
 }
 \description{

@@ -7,16 +7,16 @@
 \method{print}{NBCD}(x, size = c("small", "big"), ..., use.lm = FALSE)
 }
 \arguments{
-\item{x}{[NBCD]
+\item{x}{\code{[NBCD]}\cr
 NBCD model.}
 
-\item{size}{[character]
+\item{size}{\code{[character]}\cr
 small or big}
 
-\item{...}{[any]
+\item{...}{\code{[any]}\cr
 Currently ignored.}
 
-\item{use.lm}{[logical]
+\item{use.lm}{\code{[logical]}\cr
 use lm for prediction?}
 }
 \description{

@@ -7,21 +7,21 @@
 getPredictionModel(model, pred.time, use.lm = TRUE, n.models = Inf)
 }
 \arguments{
-\item{model}{[NBCD]
+\item{model}{\code{[NBCD]}\cr
 NBCD model.}
 
-\item{pred.time}{[numeric(1)]
+\item{pred.time}{\code{[numeric(1)]}\cr
 Time point of prediction.}
 
-\item{use.lm}{[logical(1)]
+\item{use.lm}{\code{[logical(1)]}\cr
 Use lm models to forecast the movements of mean and sd? (Default TRUE)
 If FALSE, use mean and sd of old.model.}
 
-\item{n.models}{[numeric(1)]
+\item{n.models}{\code{[numeric(1)]}\cr
 Number of past model values for the linear prediction.}
 }
 \value{
-[nb2]
+\code{[nb2]}\cr
   nb2 model
 }
 \description{

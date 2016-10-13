@@ -25,7 +25,8 @@ returned, and the class with maximal probability else.}
 \item{...}{Currently ignored.}
 }
 \description{
-Prediction for Extended Naive Bayes (nb2)
+Modified and extended copy of \link[e1071]{predict.naiveBayes} from
+\code{e1071}.
 }
 \examples{
 mod <- nb2(iris[, 1:4], iris[, 5])
@@ -38,5 +39,16 @@ predict(mod2, iris)
 c(mean(predict(mod, iris) == iris$Species),
   mean(predict(mod2, iris) == iris$Species))
 
+}
+\author{
+\itemize{
+  \item David Meyer \email{David.Meyer@R-project.org}: original \link[e1071]{predict.naiveBayes}
+  \item Philipp Aschersleben \email{aschersleben@statistik.tu-dortmund.de}:
+  modifications and extensions for the NBCD package
+}
+}
+\seealso{
+\code{\link{nb2}}, \code{\link{update.nb2}}, \code{\link{plot.nb2}},
+\code{\link{print.nb2}}
 }
 

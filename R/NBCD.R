@@ -1,34 +1,34 @@
 #' Make or update NBCD model.
 #'
-#' @param new.obs [list]
-#'   Has elements "x" [data.frame] and "class" [factor]
+#' @param new.obs \code{[list]}\cr
+#'   Has elements "x" \code{[data.frame]} and "class" \code{[factor]}
 #'   (and "time", if missing: +1)
 #'
-#' @param model [list]
+#' @param model \code{[list]}\cr
 #'   Model from makeNBCDmodel or empty.
 #'
-#' @param max.waiting.time [numeric(1)]
+#' @param max.waiting.time \code{[numeric(1)]}\cr
 #'
-#' @param init.obs [numeric(1)]
+#' @param init.obs \code{[numeric(1)]}\cr
 #'
-#' @param verbose [logical(1)]
+#' @param verbose \code{[logical(1)]}\cr
 #'
-#' @param ... [any]
+#' @param ... \code{[any]}\cr
 #'   Arguments passed to update.nb2(...).
 #'
-#' @param waiting.time [character(1)]
+#' @param waiting.time \code{[character(1)]}\cr
 #'   Default is "fixed". If "auto", then calculate waiting time between two
 #'   models (for factorial variables) with getWaitingTime(). If "fixed", use
 #'   max.waiting.time.
 #'
-#' @param min.waiting.time [numeric(1)]
+#' @param min.waiting.time \code{[numeric(1)]}\cr
 #'   Minimal waiting time, if waiting.time = "auto".
 #'
-#' @param wait.all.classes [logical(1)]
+#' @param wait.all.classes \code{[logical(1)]}\cr
 #'   If waiting.time = "auto", should algo wait for all classes to be appeared?
 #'
 #'
-#' @return [NBCD]
+#' @return \code{[NBCD]}\cr
 #' NBCD model
 #'
 #' @export
@@ -215,7 +215,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
 
 #' Initialize NBCD model.
 #'
-#' @return [NBCD]
+#' @return \code{[NBCD]}\cr
 #' Empty model.
 #'
 
@@ -230,12 +230,13 @@ initModel <- function() {
 
 #' Reset Model when waiting.time reached
 #'
-#' @param model [NBCD]
+#' @param model \code{[NBCD]}\cr
 #'   "model$current"
-#' @param var.name [character]
+#'
+#' @param var.name \code{[character]}\cr
 #'
 #'
-#' @return [NBCD]
+#' @return \code{[NBCD]}\cr
 #'   NBCD model with resetted "current" part.
 #'
 
@@ -256,16 +257,19 @@ resetModel <- function(model, var.name) {
 
 #' Create a prediction model from parts of an NBCD model.
 #'
-#' @param old.model [list]
+#' @param old.model \code{[list]}\cr
 #'   "old" part of NBCD model.
-#' @param new.model [list]
+#'
+#' @param new.model \code{[list]}\cr
 #'   "current" part of NBCD model.
-#' @param var.name [character]
+#'
+#' @param var.name \code{[character]}\cr
 #'   Name of variable for which to create prediction model.
-#' @param n.models [numeric(1)]
+#'
+#' @param n.models \code{[numeric(1)]}\cr
 #'   Number of past model values for the linear prediction.
 #'
-#' @return [list]
+#' @return \code{[list]}\cr
 #'   To be used as "pred.mod" part of "old" part of NBCD model.
 #'   For functions makeNBCDmodel(...) and predict.NBCD(...).
 #'
@@ -349,22 +353,22 @@ setPredictionModel <- function(old.model, new.model, var.name, n.models = Inf) {
 
 #' Get a prediction model from NBCD model.
 #'
-#' @param model [NBCD]
+#' @param model \code{[NBCD]}\cr
 #'   NBCD model.
 #'
-#' @param pred.time [numeric(1)]
+#' @param pred.time \code{[numeric(1)]}\cr
 #'   Time point of prediction.
 #'
-#' @param use.lm [logical(1)]
+#' @param use.lm \code{[logical(1)]}\cr
 #'   Use lm models to forecast the movements of mean and sd? (Default TRUE)
 #'   If FALSE, use mean and sd of old.model.
 #'
-#' @param n.models [numeric(1)]
+#' @param n.models \code{[numeric(1)]}\cr
 #'   Number of past model values for the linear prediction.
 #'
 #' @export
 #'
-#' @return [nb2]
+#' @return \code{[nb2]}\cr
 #'   nb2 model
 #'
 
@@ -451,23 +455,23 @@ getPredictionModel <- function(model, pred.time, use.lm = TRUE, n.models = Inf) 
 
 #' Predict class values for new data with NBCD model.
 #'
-#' @param object [NBCD]
+#' @param object \code{[NBCD]}\cr
 #'   NBCD model.
 #'
-#' @param newdata [data.frame]
+#' @param newdata \code{[data.frame]}\cr
 #'   Containing variables.
 #'
-#' @param time [numeric(1)]
+#' @param time \code{[numeric(1)]}\cr
 #'   Time for which to predict.
 #'
-#' @param use.lm [logical(1)]
+#' @param use.lm \code{[logical(1)]}\cr
 #'   Use lm models to forecast the movements of mean and sd? (Default TRUE)
 #'   If FALSE, use mean and sd of old.model.
 #'
 #' @param ...
 #'   Arguments passed to predict.nb2(...).
 #'
-#' @param n.models [numeric(1)]
+#' @param n.models \code{[numeric(1)]}\cr
 #'   Number of past model values for the linear prediction.
 #'
 #' @return
@@ -489,24 +493,24 @@ predict.NBCD <- function(object, newdata, time, use.lm, n.models = Inf, ...) {
 
 #' Plot predicted class values of NBCD model.
 #'
-#' @param x [NBCD]
+#' @param x \code{[NBCD]}\cr
 #'   NBCD model.
 #'
-#' @param time [numeric(1)]
+#' @param time \code{[numeric(1)]}\cr
 #'   Time for which to predict (passed to predict.NBCD(...)).
 #'
-#' @param use.lm [logical(1)]
+#' @param use.lm \code{[logical(1)]}\cr
 #'   Use lm models to forecast the movements of mean and sd? (Default TRUE)
 #'   If FALSE, use mean and sd of old.model.
 #'   (passed to predict.NBCD(...))
 #'
-#' @param ... [any]
+#' @param ... \code{[any]}\cr
 #'   Arguments passed to plot.nb2(...).
 #'
-#' @param n.models [numeric(1)]
+#' @param n.models \code{[numeric(1)]}\cr
 #'   Number of past model values for the linear prediction.
 #'
-#' @param .verb [logical(1)]
+#' @param .verb \code{[logical(1)]}\cr
 #'   Show messages? Default TRUE.
 #'
 #' @export
@@ -528,16 +532,16 @@ plot.NBCD <- function(x, time, use.lm = FALSE, ..., n.models = Inf,
 
 #' Print information about NBCD model.
 #'
-#' @param x [NBCD]
+#' @param x \code{[NBCD]}\cr
 #'   NBCD model.
 #'
-#' @param size [character]
+#' @param size \code{[character]}\cr
 #'   small or big
 #'
-#' @param ... [any]
+#' @param ... \code{[any]}\cr
 #'   Currently ignored.
 #'
-#' @param use.lm [logical]
+#' @param use.lm \code{[logical]}\cr
 #'   use lm for prediction?
 #'
 #' @export

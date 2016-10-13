@@ -7,17 +7,28 @@
 \method{print}{nb2}(x, ..., digits = getOption("digits"), print.apl = FALSE)
 }
 \arguments{
-\item{x}{[nb2]
+\item{x}{\code{[nb2]}\cr
 nb2 object to print.}
 
 \item{...}{Currently not used.}
 
-\item{digits}{[numeric]}
+\item{digits}{\code{[numeric]}\cr}
 
-\item{print.apl}{[logical]
+\item{print.apl}{\code{[logical]}\cr
 Print apriori.list? Else: apriori.}
 }
 \description{
-Modified copy of e1071:::print.naiveBayes.
+Modified copy of \link[e1071]{print.naiveBayes} from \code{e1071}.
+}
+\author{
+\itemize{
+  \item David Meyer \email{David.Meyer@R-project.org}: original \link[e1071]{print.naiveBayes}
+  \item Philipp Aschersleben \email{aschersleben@statistik.tu-dortmund.de}:
+  modifications and extensions for the NBCD package
+}
+}
+\seealso{
+\code{\link{nb2}}, \code{\link{update.nb2}}, \code{\link{plot.nb2}},
+\code{\link{predict.nb2}}
 }
 

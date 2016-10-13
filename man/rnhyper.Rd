@@ -7,15 +7,15 @@
 rnhyper(n, mean = 0, sd = 1, d)
 }
 \arguments{
-\item{n}{[numeric(1)]}
+\item{n}{\code{[numeric(1)]}\cr}
 
-\item{mean}{[numeric(1) | numeric(d)]}
+\item{mean}{\code{[numeric(1) | numeric(d)]}\cr}
 
-\item{sd}{[numeric(1) | numeric(d) | matrix(d, d)]
+\item{sd}{\code{[numeric(1) | numeric(d) | matrix(d, d)]}\cr
 If matrix, it's a VCV with variances on the diagonal.
 Else, interpreted as standard deviations.}
 
-\item{d}{[numeric(1)]
+\item{d}{\code{[numeric(1)]}\cr
 Dim.}
 }
 \description{

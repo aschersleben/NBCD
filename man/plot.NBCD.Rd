@@ -8,24 +8,24 @@
   .verb = TRUE)
 }
 \arguments{
-\item{x}{[NBCD]
+\item{x}{\code{[NBCD]}\cr
 NBCD model.}
 
-\item{time}{[numeric(1)]
+\item{time}{\code{[numeric(1)]}\cr
 Time for which to predict (passed to predict.NBCD(...)).}
 
-\item{use.lm}{[logical(1)]
+\item{use.lm}{\code{[logical(1)]}\cr
 Use lm models to forecast the movements of mean and sd? (Default TRUE)
 If FALSE, use mean and sd of old.model.
 (passed to predict.NBCD(...))}
 
-\item{...}{[any]
+\item{...}{\code{[any]}\cr
 Arguments passed to plot.nb2(...).}
 
-\item{n.models}{[numeric(1)]
+\item{n.models}{\code{[numeric(1)]}\cr
 Number of past model values for the linear prediction.}
 
-\item{.verb}{[logical(1)]
+\item{.verb}{\code{[logical(1)]}\cr
 Show messages? Default TRUE.}
 }
 \description{

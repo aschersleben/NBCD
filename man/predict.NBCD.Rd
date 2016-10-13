@@ -7,20 +7,20 @@
 \method{predict}{NBCD}(object, newdata, time, use.lm, n.models = Inf, ...)
 }
 \arguments{
-\item{object}{[NBCD]
+\item{object}{\code{[NBCD]}\cr
 NBCD model.}
 
-\item{newdata}{[data.frame]
+\item{newdata}{\code{[data.frame]}\cr
 Containing variables.}
 
-\item{time}{[numeric(1)]
+\item{time}{\code{[numeric(1)]}\cr
 Time for which to predict.}
 
-\item{use.lm}{[logical(1)]
+\item{use.lm}{\code{[logical(1)]}\cr
 Use lm models to forecast the movements of mean and sd? (Default TRUE)
 If FALSE, use mean and sd of old.model.}
 
-\item{n.models}{[numeric(1)]
+\item{n.models}{\code{[numeric(1)]}\cr
 Number of past model values for the linear prediction.}
 
 \item{...}{Arguments passed to predict.nb2(...).}

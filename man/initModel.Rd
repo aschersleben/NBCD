@@ -7,7 +7,7 @@
 initModel()
 }
 \value{
-[NBCD]
+\code{[NBCD]}\cr
 Empty model.
 }
 \description{

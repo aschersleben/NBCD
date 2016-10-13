@@ -1,13 +1,16 @@
 #' Variance calculation (updatable) by Youngs and Cramer
 #'
-#' @param x [numeric]
+#' @param x \code{[numeric]}\cr
 #'   vector (finite, no missing values)
 #'
-#' @param object [list | NULL]
-#'   list from updateVarYC or NULL
+#' @param object \code{[ycVar | NULL]}\cr
+#'   list (object from updateVarYC) or NULL
 #'
-#' @return [list(1)]
-#'   $var: variance of x via Youngs-Cramer-algorithm
+#' @return \code{[ycVar]}\cr
+#'   \itemize{
+#'     \item \code{$var}: (updated) variance via Youngs-Cramer-algorithm
+#'     \item \code{$n}: number of included elements
+#'   }
 #'
 #' @section Alternatives:
 #' \itemize{
@@ -28,19 +31,19 @@
 #' Youngs, Edward A., and Elliot M. Cramer. "Some results relevant to choice of
 #' sum and sum-of-product algorithms." Technometrics 13.3 (1971): 657--665,
 #' \href{http://dx.doi.org/10.2307/1267176}{DOI:10.2307/1267176}.
-#' See also:
-#' \url{http://scholar.google.de/scholar?cluster=10728821699746172437&hl=de}
+#'
+#' @export
 #'
 #' @examples
 #' \dontrun{
-#'   yc.fun = function(x) {
-#'     yc = NULL
-#'     for (i in seq_along(x)) {
-#'       yc = NBCD:::updateVarYC(x[i], yc)
-#'     }
-#'     return(yc$var)
+#' yc.fun = function(x) {
+#'   yc = NULL
+#'   for (i in seq_along(x)) {
+#'     yc = NBCD:::updateVarYC(x[i], yc)
 #'   }
-#'   yc.fun(1:10)
+#'   return(yc$var)
+#' }
+#' yc.fun(1:10)
 #' }
 #'
 
@@ -82,19 +85,17 @@ updateVarYC = function(x, object = NULL) {
 
 
 
-#' "Normalize" objects.
-#'
-#' @param x [numeric]
-#' Object
-#'
-#' @return
-#' Object divided by sum of its values.
-#'
-#' @export
-#'
-#' @examples
-#' probnorm(1:5)
-#'
+# "Normalize" objects.
+#
+# @param x \code{[numeric]}\cr
+# Object
+#
+# @return
+# Object divided by sum of its values.
+#
+# @examples
+# probnorm(1:5)
+#
 
 probnorm <- function(x) {
   x / sum(x)
@@ -106,7 +107,7 @@ probnorm <- function(x) {
 # #'
 # #' Values > 1 or < 0 will be subsetted to 1 or 0 resp. Then probnorm...
 # #'
-# #' @param x [any]
+# #' @param x \code{[any]}\cr
 # #' Object
 # #'
 # #' @return
@@ -126,23 +127,34 @@ probnorm <- function(x) {
 
 
 
-#' Wrapper for kMcpp.
+#' Waiting Time Calculation
 #'
-#' @param x
+#' Calculates the mean waiting time for a special absorbing markov chain
+#' (directed acyclic graph) that is based on an n-point-distribution. The value
+#' of this function answers the question:\cr\cr
+#' "How long do I have to wait (on average) until every
+#' value of a discrete distribution (with a finite set of values) appears
+#' \emph{at least} once?"\cr\cr
+#' Uses \code{Rcpp} with memoization for faster calculations, but the problem
+#' is still \eqn{O(2^n)}: 0.2s for \code{length(x) = 15}, and 11s
+#' for \code{length(x) = 20}. An approximation approach is given, see argument
+#' \code{"max.len"}.
+#'
+#'
+#' @param x \code{[numeric]}\cr
 #' Probabilities for which to calculate the mean waiting time.
 #'
-#' @param max.len
+#' @param max.len \code{[numeric(1)]}\cr
 #' Controls calculation time. If x is longer than max.len, the waiting time will
-#' be approximated: x then just contains the (max.len - 1) smallest values and
+#' be approximated: x then just contains the \eqn{max.len-1} smallest values and
 #' the sum of all others. Default is 10.
 #'
-#' @return [numeric(1)]
-#' Mean waiting time.
+#' @return \code{[numeric(1)]} Mean waiting time.
 #'
 #' @export
 #'
 #' @examples
-#' # Throw a die - how long till every number...
+#' # How long until every side of a dice appears at least once (on average)?
 #' getWaitingTime(rep(1/6, 6))
 #'
 #' # Approximation:
@@ -151,6 +163,7 @@ probnorm <- function(x) {
 #' tmp <- probnorm(runif(18))
 #' system.time(print(getWaitingTime(tmp, max.len = 18)))
 #' system.time(print(getWaitingTime(tmp, max.len = 10)))
+#' system.time(print(getWaitingTime(tmp, max.len = 5)))
 #' }
 #'
 
@@ -172,15 +185,15 @@ getWaitingTime <- function(x, max.len = 10) {
 
 #' Create hyperplane data with independant normal distributions
 #'
-#' @param n [numeric(1)]
+#' @param n \code{[numeric(1)]}\cr
 #'
-#' @param mean [numeric(1) | numeric(d)]
+#' @param mean \code{[numeric(1) | numeric(d)]}\cr
 #'
-#' @param sd [numeric(1) | numeric(d) | matrix(d, d)]
+#' @param sd \code{[numeric(1) | numeric(d) | matrix(d, d)]}\cr
 #'   If matrix, it's a VCV with variances on the diagonal.
 #'   Else, interpreted as standard deviations.
 #'
-#' @param d [numeric(1)]
+#' @param d \code{[numeric(1)]}\cr
 #'   Dim.
 #'
 #' @export
@@ -215,21 +228,21 @@ rnhyper <- function(n, mean = 0, sd = 1, d) {
 
 #' Polar to Cartesian Coordinates
 #'
-#' @param phi [numeric]
+#' @param phi \code{[numeric]}\cr
 #'
-#' @param radius [numeric]
+#' @param radius \code{[numeric]}\cr
 #'
-#' @param measure [character(1)]
+#' @param measure \code{[character(1)]}\cr
 #'   Measure of "phi" (degrees, radians, or turns)
 #'
-#' @param start [character(1)]
+#' @param start \code{[character(1)]}\cr
 #'   Start position, default is east ("E").
 #'
-#' @param direction [character(1)]
+#' @param direction \code{[character(1)]}\cr
 #'   Anti-clockwise (default) or clockwise.
 #'
 #'
-#' @return [matrix]
+#' @return \code{[matrix]}\cr
 #'   Cartesian coordinates.
 #'
 #'
@@ -299,19 +312,19 @@ pol2cart <- function(phi, radius = 1L, measure = c("rad", "deg", "turn"),
 
 #' Paste head of object to a string with a maximal length.
 #'
-#' @param x [numeric | character]
+#' @param x \code{[numeric | character]}\cr
 #' Object to paste.
 #'
-#' @param len [numeric]
+#' @param len \code{[numeric]}\cr
 #' Maximal length.
 #'
-#' @param coll [character]
+#' @param coll \code{[character]}\cr
 #' Separation string.
 #'
-#' @param end [character]
+#' @param end \code{[character]}\cr
 #' End string.
 #'
-#' @return [character(1)]
+#' @return \code{[character(1)]}\cr
 #'
 
 pastehead <- function(x, len = 3, coll = " / ", end = "...") {

@@ -1,14 +1,10 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// // [[Rcpp::depends(digest)]]
-// // #include <pmurhashAPI.h>
-
-
-/////////////////////////////////////////////////
-// Source: http://stackoverflow.com/a/36973875 //
-/////////////////////////////////////////////////
-
+//////////////////////////////////////////
+// Source for the memoziation approach: //
+// http://stackoverflow.com/a/36973875  //
+//////////////////////////////////////////
 
 // Memoization structure to hold the hash map
 struct mem_map{
@@ -23,12 +19,8 @@ struct mem_map{
   static std::map<int, double> memo;
 };
 
-
-
 // Instantiate class in global scope
 std::map<int, double> mem_map::memo = mem_map::create_map();
-
-
 
 // Reset map
 //
@@ -36,8 +28,6 @@ std::map<int, double> mem_map::memo = mem_map::create_map();
 void clear_mem(){
   mem_map::memo.clear();
 };
-
-
 
 // Get map values.
 //
@@ -48,24 +38,16 @@ std::map<int, double> get_mem(){
 
 
 
-// bool isZero(double x) { return x == 0; }
+// Waiting Time Calculation
 //
-// std::vector<double> remZ(std::vector<double> p) {
-//   p.erase(std::remove_if(p.begin(), p.end(), isZero),
-//           p.end());
-//   return p;
-// }
-
-
-
-// kMcpp function
+// See \code{\link{getWaitingTime}} for further information.
 //
-// @param p p
-// @param p1 p1
-// @param p2 p2
-// @param i1 i1
-// @param imem imem
-// @export
+// @param p \code{[numeric]}\cr
+//   Values have to add up to 1, will be checked. Otherwise returns an error.
+//
+// @param p1,p2,i1,imem
+//   Parameters for recursion, do not change manually!
+//
 // [[Rcpp::export]]
 double kMcpp(NumericVector p,
              NumericVector p1 = NumericVector::create(),
@@ -76,9 +58,9 @@ double kMcpp(NumericVector p,
   int plen = p.size();
   int p1len = p1.size();
   int i1len = i1.size();
+
+  // When starting, control if sum of "p" values is equal to 1
   if (p1len == 0) {
-    // p = remZ(p);
-    // plen = p.size();
     double psabs = std::abs(std::accumulate(p.begin(), p.end(), 0.0) - 1.0);
     if (psabs > sqrt(std::numeric_limits< double >::epsilon())) {
       Rcpp::stop("Sum of p not equal to 1");
@@ -88,7 +70,7 @@ double kMcpp(NumericVector p,
     mem_map::memo.clear();
   }
 
-  // Look if already computed
+  // Look at hash map if already computed
   if(mem_map::memo.count(imem) > 0)
     return mem_map::memo[imem];
 
@@ -119,19 +101,12 @@ double kMcpp(NumericVector p,
       for (int k = 0; k < kl; k++) {
         i2 = i2 + i1n(k) * pow(2, i1n(k));
       }
-      // i2 = p1len + i2 * p1len;
       i2 = p1len * pow(10, 8) + i2;
-      //
-      // int seed = 0;
-      // std::string txt2 = std::to_string(i2);
-      // const char* txt = txt2.c_str();
-      // // const char txt[3];
-      // // sprintf(txt, "%d", i2);
-      // uint32_t nChar = strlen(txt);
-      // unsigned int i2m = PMurHash32(seed, txt, nChar);
 
+      // recursion step:
       out = out + p1[i] * kMcpp(p, pn, p2n, i1n, i2);
     }
+
     if (p2len > 0) {
       double den = 1 - std::accumulate(p2.begin(), p2.end(), 0.0);
       out = out / den;
@@ -140,10 +115,3 @@ double kMcpp(NumericVector p,
   mem_map::memo[imem] = out;
   return out;
 };
-
-
-// /*** R
-// k2cpp(rep(1/5, 5))
-// k2.mem(rep(1/5, 5))
-// kMcpp(rep(1/5, 5))
-// */

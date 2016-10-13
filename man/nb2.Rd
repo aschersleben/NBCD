@@ -7,42 +7,54 @@
 nb2(x, y, laplace = 0, discretize, discParams, ...)
 }
 \arguments{
-\item{x}{[matrix | data.frame]
+\item{x}{\code{[matrix | data.frame]}\cr
 A numeric matrix, or a data frame of categorical and/or numeric variables.}
 
-\item{y}{[numeric | factor | character]
+\item{y}{\code{[numeric | factor | character]}\cr
 Class vector.}
 
-\item{laplace}{[numeric(1)]
+\item{laplace}{\code{[numeric(1)]}\cr
 positive double controlling Laplace smoothing.
 The default (0) disables Laplace smoothing.}
 
-\item{discretize}{[character(1)]
+\item{discretize}{\code{[character(1)]}\cr
 If missing: No discretization will be performed and discParams argument is
   ignored.
 If "fixed": number of intervals or there boundaries have to be given in the
   discParam argument}
 
-\item{discParams}{[numeric | list]
+\item{discParams}{\code{[numeric | list]}\cr
 If discretize = "fixed": Has to be a named list giving the boundaries for
   the variables to be discretized.}
 
 \item{...}{Currently not used.}
 }
 \value{
-[list] of type "naiveBayes"
+\code{[nb2]}\cr
 additional element: "yc" contains Youngs-Cramer variance parameters
 }
 \description{
-nb2: Extended Naive Bayes - Updateable Version
+Modified and extended copy of \link[e1071]{naiveBayes} from \code{e1071}.
 }
 \examples{
 mod <- nb2(iris[, 1:4], iris[, 5])
 mod
 
+# Example for easy discretization:
 discParam <- list(Sepal.L = c(5, 6, 7), Sepal.W = c(2.5, 3.5))
 mod2 <- nb2(iris[, 1:4], iris[, 5], discretize = "fixed", discParams = discParam)
 mod2
 
+}
+\author{
+\itemize{
+  \item David Meyer \email{David.Meyer@R-project.org}: original \link[e1071]{naiveBayes}
+  \item Philipp Aschersleben \email{aschersleben@statistik.tu-dortmund.de}:
+  modifications and extensions for the NBCD package
+}
+}
+\seealso{
+\code{\link{update.nb2}}, \code{\link{plot.nb2}},
+\code{\link{print.nb2}}, \code{\link{predict.nb2}}
 }
 

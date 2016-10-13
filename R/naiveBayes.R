@@ -1,37 +1,50 @@
 #' nb2: Extended Naive Bayes - Updateable Version
 #'
-#' @param x [matrix | data.frame]
+#' Modified and extended copy of \link[e1071]{naiveBayes} from \code{e1071}.
+#'
+#' @param x \code{[matrix | data.frame]}\cr
 #' A numeric matrix, or a data frame of categorical and/or numeric variables.
 #'
-#' @param y [numeric | factor | character]
+#' @param y \code{[numeric | factor | character]}\cr
 #' Class vector.
 #'
-#' @param laplace [numeric(1)]
+#' @param laplace \code{[numeric(1)]}\cr
 #' positive double controlling Laplace smoothing.
 #' The default (0) disables Laplace smoothing.
 #'
-#' @param discretize [character(1)]
+#' @param discretize \code{[character(1)]}\cr
 #' If missing: No discretization will be performed and discParams argument is
 #'   ignored.
 #' If "fixed": number of intervals or there boundaries have to be given in the
 #'   discParam argument
 #'
-#' @param discParams [numeric | list]
+#' @param discParams \code{[numeric | list]}\cr
 #' If discretize = "fixed": Has to be a named list giving the boundaries for
 #'   the variables to be discretized.
 #'
 #' @param ...
-#' Currently not used.
+#' Currently ignored.
 #'
-#' @return [list] of type "naiveBayes"
+#' @return \code{[nb2]}\cr
 #' additional element: "yc" contains Youngs-Cramer variance parameters
 #'
+#' @author
+#' \itemize{
+#'   \item David Meyer \email{David.Meyer@@R-project.org}: original \link[e1071]{naiveBayes}
+#'   \item Philipp Aschersleben \email{aschersleben@@statistik.tu-dortmund.de}:
+#'   modifications and extensions for the NBCD package
+#' }
+#'
 #' @export
+#'
+#' @seealso \code{\link{update.nb2}}, \code{\link{plot.nb2}},
+#' \code{\link{print.nb2}}, \code{\link{predict.nb2}}
 #'
 #' @examples
 #' mod <- nb2(iris[, 1:4], iris[, 5])
 #' mod
 #'
+#' # Example for easy discretization:
 #' discParam <- list(Sepal.L = c(5, 6, 7), Sepal.W = c(2.5, 3.5))
 #' mod2 <- nb2(iris[, 1:4], iris[, 5], discretize = "fixed", discParams = discParam)
 #' mod2
@@ -96,19 +109,22 @@ nb2 <- function(x, y, laplace = 0, discretize, discParams, ...) {
 
 #' Update Naive Bayes Classifier with New Data
 #'
-#' @param object [nb2]
+#' @param object \code{[nb2]}\cr
 #' Naive Bayes model to be updated.
 #'
-#' @param newdata [data.frame]
+#' @param newdata \code{[data.frame]}\cr
 #' Data.frame with same column names as in object.
 #'
-#' @param y [factor | numeric | character]
+#' @param y \code{[factor | numeric | character]}\cr
 #' Class vector.
 #'
 #' @param ...
 #' Arguments passed to \code{\link{nb2}()}.
 #'
 #' @export
+#'
+#' @seealso \code{\link{nb2}}, \code{\link{plot.nb2}},
+#' \code{\link{print.nb2}}, \code{\link{predict.nb2}}
 #'
 #' @examples
 #' data = data.frame(x1 = 1:10, x2 = 1:10)
@@ -141,7 +157,7 @@ nb2 <- function(x, y, laplace = 0, discretize, discParams, ...) {
 #'                   check.attributes = FALSE, check.names = FALSE))
 #'   plot(obj, xlim = c(-2, 2), ylim = c(-2, 2), gridsize = 50, gg = FALSE)
 #'   points(dat$x[1:j, ], col = dat$classes[1:j], pch = 4, lwd = 4)
-#'   BBmisc::pause()
+#'   if (requireNamespace("BBmisc", quietly = TRUE)) BBmisc::pause()
 #'   i = j + 1
 #' }
 #' all.equal(obj, nb2(dat$x, dat$classes), check.attributes = FALSE, check.names = FALSE)
@@ -350,6 +366,9 @@ update.nb2 <- function(object, newdata, y, ...) {
 
 #' Prediction for Extended Naive Bayes (nb2)
 #'
+#' Modified and extended copy of \link[e1071]{predict.naiveBayes} from
+#' \code{e1071}.
+#'
 #' @param object
 #' An object of class "nb2".
 #'
@@ -372,7 +391,17 @@ update.nb2 <- function(object, newdata, y, ...) {
 #' @param ...
 #' Currently ignored.
 #'
+#' @author
+#' \itemize{
+#'   \item David Meyer \email{David.Meyer@@R-project.org}: original \link[e1071]{predict.naiveBayes}
+#'   \item Philipp Aschersleben \email{aschersleben@@statistik.tu-dortmund.de}:
+#'   modifications and extensions for the NBCD package
+#' }
+#'
 #' @export
+#'
+#' @seealso \code{\link{nb2}}, \code{\link{update.nb2}}, \code{\link{plot.nb2}},
+#' \code{\link{print.nb2}}
 #'
 #' @examples
 #' mod <- nb2(iris[, 1:4], iris[, 5])
@@ -450,35 +479,38 @@ predict.nb2 <- function(object, newdata, type = c("class", "raw"),
 
 #' Plot Naive Bayes Models
 #'
-#' @param x [nb2]
+#' @param x \code{[nb2]}\cr
 #' A Naive Bayes Model
 #'
-#' @param xlim,ylim [numeric(2)]
+#' @param xlim,ylim \code{[numeric(2)]}\cr
 #'
-#' @param features [numeric(2) | character(2)]
+#' @param features \code{[numeric(2) | character(2)]}\cr
 #' If missing, the first two features are plotted.
 #'
-#' @param sdevs [numeric(1)]
+#' @param sdevs \code{[numeric(1)]}\cr
 #' If missing(xlim) & missing(ylim): How many standard deviations from the mean
 #' in x and y direction.
 #'
-#' @param gridsize [numeric(1)]
+#' @param gridsize \code{[numeric(1)]}\cr
 #' Size of grid to be predicted and plotted.
 #'
-#' @param data [list | data.frame]
+#' @param data \code{[list | data.frame]}\cr
 #' List with elements "x" and "class" or data.frame (then see argument
 #' class.name).
 #'
-#' @param class.name [character]
+#' @param class.name \code{[character]}\cr
 #' If data is data.frame, then give the class' column name here.
 #' Default: \code{"class"}.
 #'
-#' @param gg [logical]
+#' @param gg \code{[logical]}\cr
 #'
 #' @param ...
 #' Currently ignored.
 #'
 #' @export
+#'
+#' @seealso \code{\link{nb2}}, \code{\link{update.nb2}},
+#' \code{\link{print.nb2}}, \code{\link{predict.nb2}}
 #'
 #' @examples
 #' mod <- nb2(iris[, 1:4], iris[, 5])
@@ -689,23 +721,33 @@ plot.nb2 <- function(x, xlim, ylim, features, sdevs = 2, gridsize, data,
 
 #' Printing nb2 objects.
 #'
-#' Modified copy of e1071:::print.naiveBayes.
+#' Modified copy of \link[e1071]{print.naiveBayes} from \code{e1071}.
 #'
-#' @param x [nb2]
+#' @param x \code{[nb2]}\cr
 #'   nb2 object to print.
 #'
 #' @param ...
-#'   Currently not used.
+#'   Currently ignored.
 #'
-#' @param digits [numeric]
+#' @param digits \code{[numeric]}\cr
 #'
-#' @param print.apl [logical]
+#' @param print.apl \code{[logical]}\cr
 #'   Print apriori.list? Else: apriori.
 #'
 #' @return
 #'   NULL
 #'
+#' @author
+#' \itemize{
+#'   \item David Meyer \email{David.Meyer@@R-project.org}: original \link[e1071]{print.naiveBayes}
+#'   \item Philipp Aschersleben \email{aschersleben@@statistik.tu-dortmund.de}:
+#'   modifications and extensions for the NBCD package
+#' }
+#'
 #' @export
+#'
+#' @seealso \code{\link{nb2}}, \code{\link{update.nb2}}, \code{\link{plot.nb2}},
+#' \code{\link{predict.nb2}}
 #'
 
 print.nb2 <- function(x, ..., digits = getOption("digits"), print.apl = FALSE) {

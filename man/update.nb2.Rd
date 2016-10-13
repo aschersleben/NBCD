@@ -7,13 +7,13 @@
 \method{update}{nb2}(object, newdata, y, ...)
 }
 \arguments{
-\item{object}{[nb2]
+\item{object}{\code{[nb2]}\cr
 Naive Bayes model to be updated.}
 
-\item{newdata}{[data.frame]
+\item{newdata}{\code{[data.frame]}\cr
 Data.frame with same column names as in object.}
 
-\item{y}{[factor | numeric | character]
+\item{y}{\code{[factor | numeric | character]}\cr
 Class vector.}
 
 \item{...}{Arguments passed to \code{\link{nb2}()}.}
@@ -52,7 +52,7 @@ while (i < nrow(dat$x)) {
                   check.attributes = FALSE, check.names = FALSE))
   plot(obj, xlim = c(-2, 2), ylim = c(-2, 2), gridsize = 50, gg = FALSE)
   points(dat$x[1:j, ], col = dat$classes[1:j], pch = 4, lwd = 4)
-  BBmisc::pause()
+  if (requireNamespace("BBmisc", quietly = TRUE)) BBmisc::pause()
   i = j + 1
 }
 all.equal(obj, nb2(dat$x, dat$classes), check.attributes = FALSE, check.names = FALSE)
@@ -60,10 +60,12 @@ all.equal(obj, nb2(dat$x, dat$classes), check.attributes = FALSE, check.names = 
 
 
 ### mixed attributes:
-set.seed(1909)
-daten <- mlbench::mlbench.2dnormals(1000)
-daten$x <- data.frame(daten$x, X3 = factor(as.numeric(daten$classes) + rbinom(1000, 1, 0.2)))
-plot(daten)
+#if (requireNamespace("mlbench", quietly = TRUE)) {
+  set.seed(1909)
+  daten <- mlbench::mlbench.2dnormals(1000)
+  daten$x <- data.frame(daten$x, X3 = factor(as.numeric(daten$classes) + rbinom(1000, 1, 0.2)))
+  plot(daten)
+#}
 
 mod1 <- nb2(daten$x[, 1:2], daten$classes)
 preds1 <- predict(mod1, daten$x[, 1:2])
@@ -106,5 +108,9 @@ upd1 <- update(mod.disc1, newdata1, y)
 upd2 <- update(mod.disc2, newdata2, y)
 all.equal(upd1, upd2)
 
+}
+\seealso{
+\code{\link{nb2}}, \code{\link{plot.nb2}},
+\code{\link{print.nb2}}, \code{\link{predict.nb2}}
 }
 

@@ -9,35 +9,35 @@ makeNBCDmodel(new.obs, model, max.waiting.time, init.obs, verbose = FALSE,
   wait.all.classes = TRUE)
 }
 \arguments{
-\item{new.obs}{[list]
-Has elements "x" [data.frame] and "class" [factor]
+\item{new.obs}{\code{[list]}\cr
+Has elements "x" \code{[data.frame]} and "class" \code{[factor]}
 (and "time", if missing: +1)}
 
-\item{model}{[list]
+\item{model}{\code{[list]}\cr
 Model from makeNBCDmodel or empty.}
 
-\item{max.waiting.time}{[numeric(1)]}
+\item{max.waiting.time}{\code{[numeric(1)]}\cr}
 
-\item{init.obs}{[numeric(1)]}
+\item{init.obs}{\code{[numeric(1)]}\cr}
 
-\item{verbose}{[logical(1)]}
+\item{verbose}{\code{[logical(1)]}\cr}
 
-\item{...}{[any]
+\item{...}{\code{[any]}\cr
 Arguments passed to update.nb2(...).}
 
-\item{waiting.time}{[character(1)]
+\item{waiting.time}{\code{[character(1)]}\cr
 Default is "fixed". If "auto", then calculate waiting time between two
 models (for factorial variables) with getWaitingTime(). If "fixed", use
 max.waiting.time.}
 
-\item{min.waiting.time}{[numeric(1)]
+\item{min.waiting.time}{\code{[numeric(1)]}\cr
 Minimal waiting time, if waiting.time = "auto".}
 
-\item{wait.all.classes}{[logical(1)]
+\item{wait.all.classes}{\code{[logical(1)]}\cr
 If waiting.time = "auto", should algo wait for all classes to be appeared?}
 }
 \value{
-[NBCD]
+\code{[NBCD]}\cr
 NBCD model
 }
 \description{

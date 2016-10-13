@@ -7,20 +7,20 @@
 pastehead(x, len = 3, coll = " / ", end = "...")
 }
 \arguments{
-\item{x}{[numeric | character]
+\item{x}{\code{[numeric | character]}\cr
 Object to paste.}
 
-\item{len}{[numeric]
+\item{len}{\code{[numeric]}\cr
 Maximal length.}
 
-\item{coll}{[character]
+\item{coll}{\code{[character]}\cr
 Separation string.}
 
-\item{end}{[character]
+\item{end}{\code{[character]}\cr
 End string.}
 }
 \value{
-[character(1)]
+\code{[character(1)]}\cr
 }
 \description{
 Paste head of object to a string with a maximal length.

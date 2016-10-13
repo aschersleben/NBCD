@@ -8,21 +8,21 @@ pol2cart(phi, radius = 1L, measure = c("rad", "deg", "turn"),
   start = c("E", "N", "W", "S"), direction = c("ACW", "CW"))
 }
 \arguments{
-\item{phi}{[numeric]}
+\item{phi}{\code{[numeric]}\cr}
 
-\item{radius}{[numeric]}
+\item{radius}{\code{[numeric]}\cr}
 
-\item{measure}{[character(1)]
+\item{measure}{\code{[character(1)]}\cr
 Measure of "phi" (degrees, radians, or turns)}
 
-\item{start}{[character(1)]
+\item{start}{\code{[character(1)]}\cr
 Start position, default is east ("E").}
 
-\item{direction}{[character(1)]
+\item{direction}{\code{[character(1)]}\cr
 Anti-clockwise (default) or clockwise.}
 }
 \value{
-[matrix]
+\code{[matrix]}\cr
   Cartesian coordinates.
 }
 \description{

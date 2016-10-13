@@ -7,20 +7,20 @@
 setPredictionModel(old.model, new.model, var.name, n.models = Inf)
 }
 \arguments{
-\item{old.model}{[list]
+\item{old.model}{\code{[list]}\cr
 "old" part of NBCD model.}
 
-\item{new.model}{[list]
+\item{new.model}{\code{[list]}\cr
 "current" part of NBCD model.}
 
-\item{var.name}{[character]
+\item{var.name}{\code{[character]}\cr
 Name of variable for which to create prediction model.}
 
-\item{n.models}{[numeric(1)]
+\item{n.models}{\code{[numeric(1)]}\cr
 Number of past model values for the linear prediction.}
 }
 \value{
-[list]
+\code{[list]}\cr
   To be used as "pred.mod" part of "old" part of NBCD model.
   For functions makeNBCDmodel(...) and predict.NBCD(...).
 }
