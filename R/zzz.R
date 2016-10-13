@@ -7,6 +7,4 @@
 #' @importFrom grDevices grey.colors rgb col2rgb
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom Rcpp sourceCpp
-#' @importFrom BBmisc pause
-#' @importFrom mlbench mlbench.smiley mlbench.2dnormals
 NULL

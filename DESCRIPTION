@@ -11,10 +11,10 @@ LazyData: TRUE
 LinkingTo: Rcpp
 Imports:
     Rcpp,
-    e1071,
-    checkmate,
     ggplot2,
-    mvtnorm,
+    checkmate,
+    mvtnorm
+Suggests:
     mlbench,
     BBmisc
 RoxygenNote: 5.0.1
