@@ -61,6 +61,10 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
                                  len = ncol(new.obs$x), any.missing = FALSE),
                     checkNumber(max.waiting.time, finite = TRUE),
                     checkList(max.waiting.time, any.missing = FALSE, len = ncol(new.obs$x)))
+  checkmate::assert(checkNumeric(init.obs, lower = 0, finite = TRUE,
+                                 len = ncol(new.obs$x), any.missing = FALSE),
+                    checkNumber(init.obs, finite = TRUE),
+                    checkList(init.obs, any.missing = FALSE, len = ncol(new.obs$x)))
 
   if (nrow(new.obs$x) > 1) {
     if (verbose)
@@ -111,6 +115,22 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   #   names(max.waiting.time) <- match.arg(names(max.waiting.time), names(new.obs$x), several.ok = TRUE)
   }
 
+  if (checkmate::testNumber(init.obs)) {
+    init.list <- vector("list", ncol(new.obs$x))
+    names(init.list) <- names(new.obs$x)
+    init.obs <- lapply(init.list, function(x) init.obs)
+  } else {
+    # if (checkmate::testNumeric(init.obs)) {
+    init.obs <- as.list(init.obs)
+    if (is.null(names(init.obs))) {
+      names(init.obs) <- names(new.obs$x)
+    } else {
+      names(init.obs) <- match.arg(names(init.obs), names(new.obs$x), several.ok = TRUE)
+    }
+    # } else {
+    #   names(init.obs) <- match.arg(names(init.obs), names(new.obs$x), several.ok = TRUE)
+  }
+
   # args <- as.list(match.call())
   # args <- mget(names(formals()), sys.frame(sys.nframe()))
   # args[[1]] <- NULL
@@ -132,10 +152,11 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   # Falls Listeneintraege fuer die Variablen noch nicht in curr.model enthalten
   missing.vars <- names(nb.mod$tables)[!(names(nb.mod$tables) %in% names(curr.model))]
   for (i in missing.vars) {
-    curr.model[[i]] <- vector("list", 4)
-    names(curr.model[[i]]) <- c("nobs", "time", "wait", "type")
+    curr.model[[i]] <- vector("list", 5)
+    names(curr.model[[i]]) <- c("nobs", "time", "wait", "type", "init")
     curr.model[[i]]$type <- if (is.numeric(new.obs$x[[i]]) & !(i %in% names(model$args$discParams)))
       "numeric" else "factor"
+    curr.model[[i]]$init <- TRUE
   }
 
   curr.model <- lapply(curr.model, function(x) {
@@ -169,23 +190,22 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
 
   model$current <- curr.model
 
-  init.flag <- old.flag <- TRUE
+  # init.flag <- old.flag <- TRUE
   # Fuer alle Variablen:
   for (i in names(nb.mod$tables)) {
 
     # Pruefe, ob init.time / waiting.time erreicht
-    if ((curr.model$general$init & curr.model[[i]]$nobs >= init.obs) |
+    if ((curr.model[[i]]$init & curr.model[[i]]$nobs >= init.obs[[i]]) |
         ((curr.model[[i]]$nobs >= ifelse(is.null(old.model[[i]]), Inf, old.model[[i]]$wait)) &
          if (curr.model[[i]]$type == "numeric") TRUE else
            (!wait.all.classes | isTRUE(all(sapply(
              curr.model$general$nb2$tables, function(x) all(rowSums(x) > 0))
            ))))) {
 
-      if (init.flag & verbose)
-        cat("Init:", curr.model$general$init, "")
-      ### Init jeweils fuer einzelne Klassen oder fuer alle zusammen?
-      if (curr.model$general$init) {
-        init.flag <- FALSE
+      if (curr.model[[i]]$init & verbose)
+        cat("Init", i, "finished. ")
+      if (curr.model[[i]]$init) {
+        curr.model[[i]]$init <- FALSE
         miss.class <- (curr.model$general$nb2$apriori == 0)
         if (any(miss.class)) {
           mc <- which(miss.class)
@@ -225,6 +245,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
 
       old.model[[i]]$nb2 <- curr.model$general$nb2
       old.model[[i]]$wait <- curr.model[[i]]$wait
+      old.model[[i]]$init <- curr.model[[i]]$init
 
       model <- resetModel(model = model, var.name = i)
       model$old <- old.model
@@ -235,7 +256,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
     }
   }
 
-  if (!init.flag)
+  if (model$current$general$init & all(!sapply(model$current, "[[", "init")[-1]))
     model$current$general$init <- FALSE
 
   if (verbose && get("cat.flag", pos = .NBCD))
@@ -278,6 +299,7 @@ resetModel <- function(model, var.name) {
   model$current$general$nb2$tables[[var.name]][] <- NA
   model$current$general$nb2$yc[[var.name]] <- lapply(model$current$general$nb2$yc[[var.name]], function(x) NULL)
   model$current$general$nobs <- 0
+  model$current$general$init <- FALSE
   model$current$general$time <- lapply(model$current$general$time,
                                            lapply, function(x) NA)
   model$current[[var.name]]$nobs <- 0
@@ -647,8 +669,8 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE,
     }
 
     cat("\nArguments Passed to Function: \n")
-    cat("  > init.obs:", x$args$init.obs, "\n")
     cat("  > max.waiting.time:", pastehead(x$args$max.waiting.time, len = len), "\n")
+    cat("  > init.obs:", pastehead(x$args$init.obs, len = len), "\n")
     cat("  > waiting.time:", x$args$waiting.time, "\n")
     cat("  > min.waiting.time:", x$args$min.waiting.time, "\n")
     cat("  > wait.all.classes:", x$args$wait.all.classes, "\n")
