@@ -16,7 +16,10 @@ Has elements "x" \code{[data.frame]} and "class" \code{[factor]}
 \item{model}{\code{[list]}\cr
 Model from makeNBCDmodel or empty.}
 
-\item{max.waiting.time}{\code{[numeric(1)]}\cr}
+\item{max.waiting.time}{\code{[numeric | list]}\cr
+Can be \code{numeric(1)}, then all features with same waiting time. In the
+other case, you have to give an individual waiting time for all features
+as an (un)named vector or list.}
 
 \item{init.obs}{\code{[numeric(1)]}\cr}
 

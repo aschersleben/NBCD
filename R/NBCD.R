@@ -7,7 +7,10 @@
 #' @param model \code{[list]}\cr
 #'   Model from makeNBCDmodel or empty.
 #'
-#' @param max.waiting.time \code{[numeric(1)]}\cr
+#' @param max.waiting.time \code{[numeric | list]}\cr
+#'   Can be \code{numeric(1)}, then all features with same waiting time. In the
+#'   other case, you have to give an individual waiting time for all features
+#'   as an (un)named vector or list.
 #'
 #' @param init.obs \code{[numeric(1)]}\cr
 #'
@@ -54,6 +57,10 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   checkmate::assertSubset(c("x", "class"), names(new.obs), add = asscoll)
   checkmate::assertDataFrame(new.obs$x, add = asscoll)
   checkmate::reportAssertions(asscoll)
+  checkmate::assert(checkNumeric(max.waiting.time, lower = 0, finite = TRUE,
+                                 len = ncol(new.obs$x), any.missing = FALSE),
+                    checkNumber(max.waiting.time, finite = TRUE),
+                    checkList(max.waiting.time, any.missing = FALSE, len = ncol(new.obs$x)))
 
   if (nrow(new.obs$x) > 1) {
     if (verbose)
@@ -87,6 +94,22 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   }
   curr.model <- model$current
   old.model <- model$old
+
+  if (checkmate::testNumber(max.waiting.time)) {
+    mwt.list <- vector("list", ncol(new.obs$x))
+    names(mwt.list) <- names(new.obs$x)
+    max.waiting.time <- lapply(mwt.list, function(x) max.waiting.time)
+  } else {
+    # if (checkmate::testNumeric(max.waiting.time)) {
+    max.waiting.time <- as.list(max.waiting.time)
+    if (is.null(names(max.waiting.time))) {
+      names(max.waiting.time) <- names(new.obs$x)
+    } else {
+      names(max.waiting.time) <- match.arg(names(max.waiting.time), names(new.obs$x), several.ok = TRUE)
+    }
+  # } else {
+  #   names(max.waiting.time) <- match.arg(names(max.waiting.time), names(new.obs$x), several.ok = TRUE)
+  }
 
   # args <- as.list(match.call())
   # args <- mget(names(formals()), sys.frame(sys.nframe()))
@@ -152,7 +175,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
 
     # Pruefe, ob init.time / waiting.time erreicht
     if ((curr.model$general$init & curr.model[[i]]$nobs >= init.obs) |
-        ((curr.model[[i]]$nobs >= if (is.null(old.model[[i]])) Inf else old.model[[i]]$wait) &
+        ((curr.model[[i]]$nobs >= ifelse(is.null(old.model[[i]]), Inf, old.model[[i]]$wait)) &
          if (curr.model[[i]]$type == "numeric") TRUE else
            (!wait.all.classes | isTRUE(all(sapply(
              curr.model$general$nb2$tables, function(x) all(rowSums(x) > 0))
@@ -188,16 +211,15 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
 
       # Setze neue waiting.time
       if (curr.model[[i]]$type == "numeric") {
-        curr.model[[i]]$wait <- max.waiting.time
+        curr.model[[i]]$wait <- max.waiting.time[[i]]
       } else {
         if (waiting.time == "fixed") {
-          curr.model[[i]]$wait <- max.waiting.time
+          curr.model[[i]]$wait <- max.waiting.time[[i]]
         } else {
-          wt <- max(min.waiting.time, getWaitingTime(curr.model$general$nb2$tables[[i]]))
-          curr.model[[i]]$wait <- min(wt, max.waiting.time)
           wt <- max(min.waiting.time, getWaitingTime2(curr.model$general$nb2$tables[[i]]))
           if (!missing(k.waiting.time))
             wt <- wt * k.waiting.time
+          curr.model[[i]]$wait <- min(wt, max.waiting.time[[i]])
         }
       }
 
@@ -621,7 +643,7 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE) {
     }
 
     cat("\nArguments Passed to Function: \n")
-    cat("  > max.waiting.time:", x$args$max.waiting.time, "\n")
+    cat("  > max.waiting.time:", pastehead(x$args$max.waiting.time), "\n")
     cat("  > init.obs:", x$args$init.obs, "\n")
     cat("  > waiting.time:", x$args$waiting.time, "\n")
     cat("  > min.waiting.time:", x$args$min.waiting.time, "\n")
