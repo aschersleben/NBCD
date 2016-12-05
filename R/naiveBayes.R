@@ -60,7 +60,13 @@ nb2 <- function(x, y, laplace = 0, discretize, discParams, ...) {
   if (!missing(discretize)) {
     discretize <- match.arg(discretize, c("fixed"))
     if (discretize == "fixed") {
-      discNames <- names(discParams) <- match.arg(names(discParams), names(x), several.ok = TRUE)
+      if (checkmate::testNumeric(discParams)) {
+        disc.list <- vector("list", ncol(x))
+        discNames <- names(disc.list) <- names(x)
+        discParams <- lapply(disc.list, function(x) discParams)
+      } else {
+        discNames <- names(discParams) <- match.arg(names(discParams), names(x), several.ok = TRUE)
+      }
       out <- sapply(discNames, simplify = FALSE, function(dN) {
         breaks <- unique(c(Inf, -Inf, discParams[[dN]]))
         return(structure(cut(x[, dN], breaks = breaks), breaks = breaks))
@@ -502,10 +508,14 @@ predict.nb2 <- function(object, newdata, type = c("class", "raw"),
 #' If data is data.frame, then give the class' column name here.
 #' Default: \code{"class"}.
 #'
-#' @param gg \code{[logical]}\cr
-#'
 #' @param ...
 #' Currently ignored.
+#'
+#' @param gg \code{[logical]}\cr
+#' Use ggplot2 for plotting? Highly recommended!
+#'
+#' @param psize \code{[numeric]}\cr
+#' Point size for \code{\link[ggplot2]{geom_point}}.
 #'
 #' @export
 #'
@@ -545,7 +555,7 @@ predict.nb2 <- function(object, newdata, type = c("class", "raw"),
 #'
 
 plot.nb2 <- function(x, xlim, ylim, features, sdevs = 2, gridsize, data,
-                     class.name = "class", gg = TRUE, ...) {
+                     class.name = "class", ..., gg = TRUE, psize = 2.5) {
 
   std.gridsize <- 25
 
@@ -569,18 +579,20 @@ plot.nb2 <- function(x, xlim, ylim, features, sdevs = 2, gridsize, data,
       xlim <- range(disc.breaks[[(feat.names[1])]][is.finite(disc.breaks[[(feat.names[1])]])])
     } else if (length(x$yc[[(feat.names[1])]]) == 0) {
       xlim <- NULL
-    } else if (!missing(data)) {
-      if ((checkmate::testList(data) && feat.names[1] %in% names(data$x)) ||
-         (checkmate::testDataFrame(data) && feat.names[1] %in% names(data))) {
-        if (is.data.frame(data)) {
-          xlim <- range(data[, feat.names[1]], na.rm = TRUE)
-        } else {
-          xlim <- range(data$x[, feat.names[1]], na.rm = TRUE)
-        }
-      }
     } else {
       tab1 <- tabs[[(feats[1])]]
       xlim <- range(tab1[, 1] + t(sdevs * c(-1, 1) %*% t(tab1[, 2])), na.rm = TRUE)
+      if (!missing(data)) {
+        if ((checkmate::testList(data) && feat.names[1] %in% names(data$x)) ||
+            (checkmate::testDataFrame(data) && feat.names[1] %in% names(data))) {
+          if (is.data.frame(data)) {
+            xlim2 <- range(data[, feat.names[1]], na.rm = TRUE)
+          } else {
+            xlim2 <- range(data$x[, feat.names[1]], na.rm = TRUE)
+          }
+          xlim <- range(xlim, xlim2)
+        }
+      }
     }
   }
   xlim <- suppressWarnings(sort(xlim))
@@ -589,18 +601,20 @@ plot.nb2 <- function(x, xlim, ylim, features, sdevs = 2, gridsize, data,
       ylim <- range(disc.breaks[[(feat.names[2])]][is.finite(disc.breaks[[(feat.names[2])]])])
     } else if (length(x$yc[[(feat.names[2])]]) == 0) {
       ylim <- NULL
-    } else if (!missing(data)) {
-      if ((checkmate::testList(data) && feat.names[2] %in% names(data$x)) ||
-          (checkmate::testDataFrame(data) && feat.names[2] %in% names(data))) {
-        if (is.data.frame(data)) {
-          ylim <- range(data[, feat.names[2]], na.rm = TRUE)
-        } else {
-          ylim <- range(data$x[, feat.names[2]], na.rm = TRUE)
-        }
-      }
     } else {
       tab2 <- tabs[[(feats[2])]]
       ylim <- range(tab2[, 1] + t(sdevs * c(-1, 1) %*% t(tab2[, 2])), na.rm = TRUE)
+      if (!missing(data)) {
+        if ((checkmate::testList(data) && feat.names[2] %in% names(data$x)) ||
+            (checkmate::testDataFrame(data) && feat.names[2] %in% names(data))) {
+          if (is.data.frame(data)) {
+            ylim2 <- range(data[, feat.names[2]], na.rm = TRUE)
+          } else {
+            ylim2 <- range(data$x[, feat.names[2]], na.rm = TRUE)
+          }
+          ylim <- range(ylim, ylim2)
+        }
+      }
     }
   }
   ylim <- suppressWarnings(sort(ylim))
@@ -693,13 +707,13 @@ plot.nb2 <- function(x, xlim, ylim, features, sdevs = 2, gridsize, data,
         data$err <- (preds2 != data[, class.name])
         p <- p + geom_point(data = subset(data, !data$err),
                      aes_string(x = feat.names[1L], y = feat.names[2L], shape = class.name),
-                     size = 2.5, col = "black", show.legend = TRUE) +
+                     size = psize, col = "black", show.legend = TRUE) +
           geom_point(data = subset(data, data$err),
                             aes_string(x = feat.names[1L], y = feat.names[2L], shape = class.name),
-                            size = 4, col = "white", show.legend = FALSE) +
+                            size = psize + 1.5, col = "white", show.legend = FALSE) +
           geom_point(data = subset(data, data$err),
                      aes_string(x = feat.names[1L], y = feat.names[2L], shape = class.name),
-                     size = 2.5, col = "black", show.legend = FALSE) +
+                     size = psize, col = "black", show.legend = FALSE) +
           scale_shape_discrete(drop = FALSE) +
           # guides(colour = FALSE, shape = guide_legend(class.name))
           guides(colour = FALSE)

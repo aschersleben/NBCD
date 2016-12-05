@@ -5,7 +5,7 @@
 \title{Plot Naive Bayes Models}
 \usage{
 \method{plot}{nb2}(x, xlim, ylim, features, sdevs = 2, gridsize, data,
-  class.name = "class", gg = TRUE, ...)
+  class.name = "class", ..., gg = TRUE, psize = 2.5)
 }
 \arguments{
 \item{x}{\code{[nb2]}\cr
@@ -31,9 +31,13 @@ class.name).}
 If data is data.frame, then give the class' column name here.
 Default: \code{"class"}.}
 
-\item{gg}{\code{[logical]}\cr}
-
 \item{...}{Currently ignored.}
+
+\item{gg}{\code{[logical]}\cr
+Use ggplot2 for plotting? Highly recommended!}
+
+\item{psize}{\code{[numeric]}\cr
+Point size for \code{\link[ggplot2]{geom_point}}.}
 }
 \description{
 Plot Naive Bayes Models
