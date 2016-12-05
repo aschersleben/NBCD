@@ -27,7 +27,7 @@ Arguments passed to update.nb2(...).}
 
 \item{waiting.time}{\code{[character(1)]}\cr
 Default is "fixed". If "auto", then calculate waiting time between two
-models (for factorial variables) with getWaitingTime(). If "fixed", use
+models (for factorial variables) with getWaitingTime2(). If "fixed", use
 max.waiting.time.}
 
 \item{min.waiting.time}{\code{[numeric(1)]}\cr

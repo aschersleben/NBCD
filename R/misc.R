@@ -183,6 +183,46 @@ getWaitingTime <- function(x, max.len = 10) {
 
 
 
+#' Waiting Time Calculation via Integral
+#'
+#'
+#' The value of this function answers the question:\cr\cr
+#' "How long do I have to wait (on average) until every
+#' value of a discrete distribution (with a finite set of values) appears
+#' \emph{at least} once?"\cr\cr
+#' Uses the solution of Flajolet, Gardy and Thimonier (1992)
+#'
+#' @references Flajolet, Philippe, Daniele Gardy und Loys Thimonier. "Birthday
+#' Paradox, Coupon Collectors, Caching Algorithms and Self-Organizing Search".
+#' Discrete Applied Mathematics 39(3) (1992), 207--229.
+#' \href{http://dx.doi.org/10.1016/0166-218X(92)90177-C}{DOI:10.1016/0166-218X(92)90177-C}.
+#'
+#' @param p \code{[numeric]}\cr
+#' Probabilities for which to calculate the mean waiting time.
+#'
+#' @return \code{[numeric(1)]} Mean waiting time.
+#'
+#' @export
+#'
+#' @examples
+#' # How long until every side of a fair 40-sided dice appears at least once (on average)?
+#' getWaitingTime2(rep(1/40, 40))
+#'
+#'
+
+getWaitingTime2 <- function(p) {
+  p <- as.numeric(p)
+  p <- p[!(p < sqrt(.Machine$double.eps))]
+  checkmate::assertNumeric(p, lower = 0, finite = TRUE, any.missing = FALSE,
+                           min.len = 1)
+  if (!isTRUE(all.equal(sum(p), 1))) p <- probnorm(p)
+  wait <- function(x, p) 1 - prod(1 - exp(-p * x))
+  waitV <- function(x, p) vapply(x, wait, numeric(1), p)
+  return(integrate(waitV, 0, Inf, p = p)$value)
+}
+
+
+
 #' Create hyperplane data with independant normal distributions
 #'
 #' @param n \code{[numeric(1)]}\cr

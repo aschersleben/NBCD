@@ -2,7 +2,7 @@
 #' @import checkmate
 #' @import ggplot2
 #' @importFrom utils tail head capture.output
-#' @importFrom stats lm predict.lm predict dnorm update
+#' @importFrom stats lm predict.lm predict dnorm update integrate
 #' @importFrom graphics image points plot
 #' @importFrom grDevices grey.colors rgb col2rgb
 #' @importFrom mvtnorm rmvnorm

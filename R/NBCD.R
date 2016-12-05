@@ -18,7 +18,7 @@
 #'
 #' @param waiting.time \code{[character(1)]}\cr
 #'   Default is "fixed". If "auto", then calculate waiting time between two
-#'   models (for factorial variables) with getWaitingTime(). If "fixed", use
+#'   models (for factorial variables) with getWaitingTime2(). If "fixed", use
 #'   max.waiting.time.
 #'
 #' @param min.waiting.time \code{[numeric(1)]}\cr
@@ -187,6 +187,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
         } else {
           wt <- max(min.waiting.time, getWaitingTime(curr.model$general$nb2$tables[[i]]))
           curr.model[[i]]$wait <- min(wt, max.waiting.time)
+          wt <- max(min.waiting.time, getWaitingTime2(curr.model$general$nb2$tables[[i]]))
         }
       }
 
