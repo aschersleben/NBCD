@@ -27,6 +27,9 @@
 #' @param wait.all.classes \code{[logical(1)]}\cr
 #'   If waiting.time = "auto", should algo wait for all classes to be appeared?
 #'
+#' @param k.waiting.time \code{[numeric(1)]}
+#'   If \code{waiting.time = "auto"}, the calculated waiting time willl be
+#'   multiplied by this argument's value.
 #'
 #' @return \code{[NBCD]}\cr
 #' NBCD model
@@ -38,15 +41,19 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
                           verbose = FALSE, ...,
                           waiting.time = c("fixed", "auto"),
                           min.waiting.time = 3,
-                          wait.all.classes = TRUE) {
+                          wait.all.classes = TRUE,
+                          k.waiting.time = 1) {
 
   waiting.time <- match.arg(waiting.time)
-  checkmate::assertNumber(min.waiting.time, lower = 0)
-  checkmate::assertFlag(wait.all.classes)
 
-  checkmate::assertList(new.obs)
-  checkmate::assertSubset(c("x", "class"), names(new.obs))
-  checkmate::assertDataFrame(new.obs$x)
+  asscoll <- checkmate::makeAssertCollection()
+  checkmate::assertNumber(min.waiting.time, lower = 0, add = asscoll)
+  checkmate::assertFlag(wait.all.classes, add = asscoll)
+  checkmate::assertNumber(k.waiting.time, lower = 0, finite = TRUE, add = asscoll)
+  checkmate::assertList(new.obs, add = asscoll)
+  checkmate::assertSubset(c("x", "class"), names(new.obs), add = asscoll)
+  checkmate::assertDataFrame(new.obs$x, add = asscoll)
+  checkmate::reportAssertions(asscoll)
 
   if (nrow(new.obs$x) > 1) {
     if (verbose)
@@ -60,7 +67,8 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
                              init.obs = init.obs, verbose = verbose, ...,
                              waiting.time = waiting.time,
                              min.waiting.time = min.waiting.time,
-                             wait.all.classes = wait.all.classes)
+                             wait.all.classes = wait.all.classes,
+                             k.waiting.time = k.waiting.time)
     }
     return(model)
   }
@@ -188,6 +196,8 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
           wt <- max(min.waiting.time, getWaitingTime(curr.model$general$nb2$tables[[i]]))
           curr.model[[i]]$wait <- min(wt, max.waiting.time)
           wt <- max(min.waiting.time, getWaitingTime2(curr.model$general$nb2$tables[[i]]))
+          if (!missing(k.waiting.time))
+            wt <- wt * k.waiting.time
         }
       }
 

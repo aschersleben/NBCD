@@ -6,7 +6,7 @@
 \usage{
 makeNBCDmodel(new.obs, model, max.waiting.time, init.obs, verbose = FALSE,
   ..., waiting.time = c("fixed", "auto"), min.waiting.time = 3,
-  wait.all.classes = TRUE)
+  wait.all.classes = TRUE, k.waiting.time = 1)
 }
 \arguments{
 \item{new.obs}{\code{[list]}\cr
@@ -35,6 +35,10 @@ Minimal waiting time, if waiting.time = "auto".}
 
 \item{wait.all.classes}{\code{[logical(1)]}\cr
 If waiting.time = "auto", should algo wait for all classes to be appeared?}
+
+\item{k.waiting.time}{\code{[numeric(1)]}
+If \code{waiting.time = "auto"}, the calculated waiting time willl be
+multiplied by this argument's value.}
 }
 \value{
 \code{[NBCD]}\cr
