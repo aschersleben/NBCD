@@ -226,6 +226,101 @@ rnhyper <- function(n, mean = 0, sd = 1, d) {
 
 
 
+#' Generates data of rotating normal (two-dimensional) distributions.
+#'
+#' @param angle \code{[numeric(1)]}\cr
+#'   Rotation angle of the means in relation to the y axis (clockwise).
+#'
+#' @param n.obs \code{[numeric(1)]}\cr
+#'   Number of observations to draw from the "concept" (distribution).
+#'
+#' @param sd \code{[numeric(1)]}\cr
+#'   Standard deviation of the normal distributions.
+#'
+#' @param both \code{[logical(1)]}\cr
+#'   If TRUE, observations are equally distributed to both classes.
+#'   Default is FALSE.
+#'
+#' @param time \code{[numeric]}\cr
+#'   The time stamp to attach to the data.
+#'   If missing, it's the "angle" argument.
+#'
+#' @return \code{[list]}\cr
+#'
+#' @export
+#'
+#' @examples
+#' set.seed(1909)
+#' dat <- getDataRotNorm2(45, 100)
+#' plot(dat$x, col = dat$class)
+#'
+
+getDataRotNorm2 <- function(angle, n.obs = 1, sd = sqrt(0.2), both = FALSE,
+                            time) {
+  out <- list(x = as.data.frame(rnhyper(n.obs, sd = diag(rep(sd^2, 2)))))
+  colnames(out$x) <- c("x1", "x2")
+  if (both) {
+    out$class <- sample(rep(1:2, ceiling(n.obs / 2)), n.obs)
+  } else {
+    out$class <- sample(1:2, n.obs, TRUE)
+  }
+  out$class <- factor(out$class, 1:2)
+  out$x <- out$x + ifelse(out$class == 1, c(1, 1), c(-1, -1)) %*%
+    pol2cart(angle, measure = "d", start = "N", direction = "CW")
+  out$time <- if (missing(time)) angle else time
+  return(out)
+}
+
+
+
+#' Generates data of "rotating hyperplane" example.
+#'
+#' @param angle \code{[numeric(1)]}\cr
+#'   Rotation angle of the hyperplane in relation to the x axis (clockwise).
+#'
+#' @param n.obs \code{[numeric(1)]}\cr
+#'   Number of observations to draw from the "concept" (distribution).
+#'
+#' @param time \code{[numeric]}\cr
+#'   The time stamp to attach to the data.
+#'   If missing, it's the "angle" argument.
+#'
+#' @return \code{[list]}\cr
+#'
+#' @export
+#'
+#' @examples
+#' set.seed(1909)
+#' dat <- getDataRotHyp2(45, 100)
+#' plot(dat$x, col = dat$class)
+#'
+
+getDataRotHyp2 <- function(angle, n.obs = 1, time) {
+  slopes <- function(x) {
+    if (x < 181) {
+      circ <- (c(x, x + 180) / 180 * pi) - pi/2
+      tmp <- cbind(sin(circ), cos(circ))
+      b <- (tmp[2, 2] - tmp[1, 2]) / (tmp[2, 1] - tmp[1, 1])
+    } else {
+      circ <- (c(360 - x, 540 - x) / 180 * pi) - pi/2
+      tmp <- cbind(sin(circ), cos(circ))
+      b <- (tmp[2, 2] - tmp[1, 2]) / (tmp[1, 1] - tmp[2, 1])
+    }
+    return(b)
+  }
+
+  out <- list()
+  out$x <- as.data.frame(cbind(runif(n.obs, -1, 1), runif(n.obs, -1, 1)))
+  colnames(out$x) <- c("x1", "x2")
+  out$class <- ifelse(slopes(angle) * out$x$x1 - out$x$x2 < 0,
+                      if (angle <= 90 | angle >= 270) 1 else 2,
+                      if (angle <= 90 | angle >= 270) 2 else 1)
+  out$time <- if (missing(time)) angle else time
+  return(out)
+}
+
+
+
 #' Polar to Cartesian Coordinates
 #'
 #' @param phi \code{[numeric]}\cr
