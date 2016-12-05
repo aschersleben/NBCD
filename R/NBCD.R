@@ -577,10 +577,14 @@ plot.NBCD <- function(x, time, use.lm = FALSE, ..., n.models = Inf,
 #' @param use.lm \code{[logical]}\cr
 #'   use lm for prediction?
 #'
+#' @param len \code{[numeric(1)]}\cr
+#'   max. number of printed names/numbers/...
+#'
 #' @export
 #'
 
-print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE) {
+print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE,
+                       len = 3) {
 
   size <- match.arg(size)
   # general:
@@ -621,21 +625,21 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE) {
       cat("  >", i, paste0("(", var.types[i]))
       if (var.types[i] == "factor") {
         cat("; levels: ")
-        cat(pastehead(colnames(x$current$general$nb2$tables[[i]])))
+        cat(pastehead(colnames(x$current$general$nb2$tables[[i]]), len = len))
       }
       cat(") \n")
     }
 
-    cat("\nClasses: \n  >", pastehead(classes, 10), "\n\n")
+    cat("\nClasses: \n  >", pastehead(classes, len = len), "\n\n")
 
     cat("Number of Observations: \n")
     cat("  > total:", all.nobs, init, "\n")
-    cat("  > new model:", pastehead(paste0(curr.nobs, " (", names(curr.nobs), ")")), "\n")
+    cat("  > new model:", pastehead(paste0(curr.nobs, " (", names(curr.nobs), ")"), len = len), "\n")
     if (!is.null(x$old)) {
-      cat("  > pred. model:", pastehead(paste0(old.nobs, " (", names(old.nobs), ")")), "\n\n")
+      cat("  > pred. model:", pastehead(paste0(old.nobs, " (", names(old.nobs), ")"), len = len), "\n\n")
 
       cat("Waiting Time until Model Update: \n")
-      cat("  >", pastehead(paste0(ceiling(waits), " (", names(waits), ")")), "\n\n")
+      cat("  >", pastehead(paste0(ceiling(waits), " (", names(waits), ")"), len = len), "\n\n")
 
       cat(paste0("Prediction Model for Current Time (", time,") w/o \"lm\" Usage:"), "\n")
       predmod <- capture.output(print(getPredictionModel(x, time, use.lm = use.lm), print.apl = TRUE))
@@ -643,8 +647,8 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE) {
     }
 
     cat("\nArguments Passed to Function: \n")
-    cat("  > max.waiting.time:", pastehead(x$args$max.waiting.time), "\n")
     cat("  > init.obs:", x$args$init.obs, "\n")
+    cat("  > max.waiting.time:", pastehead(x$args$max.waiting.time, len = len), "\n")
     cat("  > waiting.time:", x$args$waiting.time, "\n")
     cat("  > min.waiting.time:", x$args$min.waiting.time, "\n")
     cat("  > wait.all.classes:", x$args$wait.all.classes, "\n")
@@ -652,16 +656,16 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE) {
   } else {
 
     cat("NBCD Model:", length(var.names), "Variables",
-        paste0("(", pastehead(var.names, 3), ")"),
+        paste0("(", pastehead(var.names, len = len), ")"),
         "with", length(classes), "Classes",
-        paste0("(", pastehead(classes, 3), ")"), "\n")
+        paste0("(", pastehead(classes, len = len), ")"), "\n")
 
     if (initflag) {
       cat(" ", init," ")
     } else {
-      cat("           ", all.nobs, "Observations,", pastehead(curr.nobs),
-          "in Current and", pastehead(old.nobs), "in Pred. Model\n")
-      cat("            Waiting Times:", pastehead(ceiling(waits)))
+      cat("           ", all.nobs, "Observations,", pastehead(curr.nobs, len = len),
+          "in Current and", pastehead(old.nobs, len = len), "in Pred. Model\n")
+      cat("            Waiting Times:", pastehead(ceiling(waits), len = len))
     }
     cat("\n")
 
