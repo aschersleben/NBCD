@@ -10,7 +10,7 @@
 \item{x}{\code{[nb2]}\cr
 nb2 object to print.}
 
-\item{...}{Currently not used.}
+\item{...}{Currently ignored.}
 
 \item{digits}{\code{[numeric]}\cr}
 

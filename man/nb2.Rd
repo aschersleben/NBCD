@@ -27,7 +27,7 @@ If "fixed": number of intervals or there boundaries have to be given in the
 If discretize = "fixed": Has to be a named list giving the boundaries for
   the variables to be discretized.}
 
-\item{...}{Currently not used.}
+\item{...}{Currently ignored.}
 }
 \value{
 \code{[nb2]}\cr

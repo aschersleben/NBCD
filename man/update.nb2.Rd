@@ -60,12 +60,10 @@ all.equal(obj, nb2(dat$x, dat$classes), check.attributes = FALSE, check.names = 
 
 
 ### mixed attributes:
-#if (requireNamespace("mlbench", quietly = TRUE)) {
-  set.seed(1909)
-  daten <- mlbench::mlbench.2dnormals(1000)
-  daten$x <- data.frame(daten$x, X3 = factor(as.numeric(daten$classes) + rbinom(1000, 1, 0.2)))
-  plot(daten)
-#}
+set.seed(1909)
+daten <- mlbench::mlbench.2dnormals(1000)
+daten$x <- data.frame(daten$x, X3 = factor(as.numeric(daten$classes) + rbinom(1000, 1, 0.2)))
+plot(daten)
 
 mod1 <- nb2(daten$x[, 1:2], daten$classes)
 preds1 <- predict(mod1, daten$x[, 1:2])

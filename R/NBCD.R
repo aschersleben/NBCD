@@ -411,18 +411,18 @@ getPredictionModel <- function(model, pred.time, use.lm = TRUE, n.models = Inf) 
     use.lm = if (isTRUE(use.lm)) "mean" else "none"
   } else use.lm = match.arg(use.lm, c("none", "mean", "both"))
 
+  asscoll <- checkmate::makeAssertCollection()
+  checkmate::assertNumber(pred.time, na.ok = FALSE, lower = 0, finite = TRUE, add = asscoll)
+  checkmate::assertNumber(n.models, lower = 2, add = asscoll)
+  checkmate::reportAssertions(asscoll)
+
   pred.model <- model$old
   var.names <- names(pred.model)
-  checkmate::assertNumber(pred.time, na.ok = FALSE, lower = 0, finite = TRUE)
-  checkmate::assertNumber(n.models, lower = 2)
   pred.mod.list <- sapply(var.names, function(x) pred.model[[x]]$pred.mod,
                           simplify = FALSE)
   ndata <- data.frame(time = pred.time)
 
-  ################################
-  # Es muessen auch die passenden apriori-Listen usw. verwendet werden!
   out.model <- pred.model[[1]]$nb2
-  ################################
 
   for (i in var.names) {                           # ueber die features
     class.names <- rownames(out.model$tables[[i]])
