@@ -4,7 +4,8 @@
 \alias{print.NBCD}
 \title{Print information about NBCD model.}
 \usage{
-\method{print}{NBCD}(x, size = c("small", "big"), ..., use.lm = FALSE)
+\method{print}{NBCD}(x, size = c("small", "big"), ..., use.lm = FALSE,
+  len = 3)
 }
 \arguments{
 \item{x}{\code{[NBCD]}\cr
@@ -18,6 +19,9 @@ Currently ignored.}
 
 \item{use.lm}{\code{[logical]}\cr
 use lm for prediction?}
+
+\item{len}{\code{[numeric(1)]}\cr
+max. number of printed names/numbers/...}
 }
 \description{
 Print information about NBCD model.
