@@ -16,5 +16,10 @@ Imports:
     mvtnorm
 Suggests:
     mlbench,
-    BBmisc
+    BBmisc,
+    knitr,
+    rmarkdown,
+    gridExtra,
+    gtable
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr

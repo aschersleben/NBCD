@@ -12,7 +12,7 @@ same holds for the NBCD method.
 
 ## Installation:
 ```r
-devtools::install_github("aschersleben/NBCD")
+devtools::install_github("aschersleben/NBCD", build_vignettes = TRUE)
 library("NBCD")
 ```
 
@@ -46,6 +46,10 @@ plot(model, ylim = c(20, 40), use.lm = TRUE, time = 150,
 
 ## About the NBCD method:
 
+See **vignette** via
+```r
+vignette("NBCD")
+```
 
 ## Extended Naive Bayes:
 
