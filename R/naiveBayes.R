@@ -686,9 +686,9 @@ plot.nb2 <- function(x, xlim, ylim, features, sdevs = 2, gridsize, data,
 
     # g <- guide_legend("class")
     p <- ggplot(grid, aes_string(x = feat.names[1L], y = feat.names[2L]))
-    p <- p + geom_tile(aes1, grid, show.legend = TRUE,
+    p <- suppressWarnings(p + geom_tile(aes1, grid, show.legend = TRUE,
                        width = if (is.null(xlim)) rep(0.75, length(xvals)) else NULL,
-                       height = if (is.null(ylim)) rep(0.75, length(yvals)) else NULL)
+                       height = if (is.null(ylim)) rep(0.75, length(yvals)) else NULL))
     p <- p + scale_alpha(limits = c(1 / length(x$levels), 1))
     p <- p + guides(alpha = FALSE)
     # p <- p + guides(alpha = FALSE, fill = g)

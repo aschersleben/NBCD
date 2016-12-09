@@ -22,13 +22,10 @@ We use the well-known `iris` dataset and add a "concept drift":
 ```r
 set.seed(1234)
 iris2 <- iris[sample(150), ]
-iris2$Sepal.Width <- iris2$Sepal.Width + seq(1, 30, len = 150)
-model <- NULL
-for (i in 1:120) {
-  model <- makeNBCDmodel(list(x = iris2[i, 1:4], class = iris2[i, 5], time = i), model = model,
-                         discretize = "fixed", discParams = list(Sepal.Length = 4:8),
-                         init.obs = 20, max.waiting.time = 20, waiting.time = "auto")
-}
+iris2$Sepal.Width <- iris2$Sepal.Width + seq(1, 30, len = 150) # <- adding a "Concept Drift"
+model <- makeNBCDmodel(list(x = iris2[1:120, 1:4], class = iris2[1:120, 5], time = 1:120), model = NULL,
+                       discretize = "fixed", discParams = list(Sepal.Length = 4:8),
+                       init.obs = 20, max.waiting.time = 20, waiting.time = "auto")
 print(model)
 ```
 
@@ -47,15 +44,14 @@ plot(model, ylim = c(20, 40), use.lm = TRUE, time = 150,
 ```
 
 
-## About the NBCD method
-
-[...]
+## About the NBCD method:
 
 
-## Extended Naive Bayes
+## Extended Naive Bayes:
 
-This package also includes an extended version of `e1071::naiveBayes` called
-`nb2`. It can be updated with new observations and includes an automated
+This package also includes `nb2()`, an extended version of `naiveBayes()`
+from [`e1071`](https://cran.r-project.org/package=e1071).
+It can be updated with new observations and includes an automated
 discretization.
 
 At the first look, there is no difference to the `e1071` function:
@@ -70,7 +66,7 @@ plot(mod)
 plot(mod, data = iris, class.name = "Species")
 ```
 
-Easy discretization:
+Easy discretization (= specifying limits for the categories):
 ```r
 discParam <- list(Sepal.L = 4:8, Sepal.W = 1:5)
 mod2 <- nb2(iris[, 1:4], iris[, 5], discretize = "fixed", discParams = discParam)
@@ -84,7 +80,12 @@ mod.upd <- update(mod, newdata = iris[1:50, 1:4], y = iris$Species[1:50])
 print(mod.upd)
 ```
 
+Easy updates for discretized variables (= no previous, manual discretization necessary):
+```r
+mod2.upd <- update(mod2, newdata = iris[51:100, 1:4], y = iris$Species[51:100])
+print(mod2.upd)
+```
 
-## Concept Drift
+## Concept Drift:
 
 Read about concept drift in Webb et al. (2016, [DOI:10.1007/s10618-015-0448-4](http://dx.doi.org/DOI:10.1007/s10618-015-0448-4)).
