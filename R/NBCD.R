@@ -433,6 +433,12 @@ getPredictionModel <- function(model, pred.time, use.lm = TRUE, n.models = Inf) 
     use.lm = if (isTRUE(use.lm)) "mean" else "none"
   } else use.lm = match.arg(use.lm, c("none", "mean", "both"))
 
+  if (missing(pred.time)) {
+    pred.time <- model$current$general$time.last
+    message("Missing pred.time argument. ",
+            "Predicition for \"last.time\" = ", pred.time)
+  }
+
   asscoll <- checkmate::makeAssertCollection()
   checkmate::assertNumber(pred.time, na.ok = FALSE, lower = 0, finite = TRUE, add = asscoll)
   checkmate::assertNumber(n.models, lower = 2, add = asscoll)
@@ -605,7 +611,7 @@ plot.NBCD <- function(x, time, use.lm = FALSE, ..., n.models = Inf,
 #' @export
 #'
 
-print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE,
+print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE, time,
                        len = 3) {
 
   size <- match.arg(size)
@@ -633,7 +639,7 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE,
   init <- if (initflag) "# INIT #" else ""
   all.nobs <- sum(x$current$general$nb2$apriori)
   curr.nobs <- sapply(x$current, "[[", "nobs")[-1]
-  time <- x$current$general$time.last
+  if (missing(time)) time <- x$current$general$time.last
 
   old.nobs <- sapply(x$old, "[[", "nobs")
   waits <- sapply(x$old, "[[", "wait")
@@ -663,7 +669,7 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE,
       cat("Waiting Time until Model Update: \n")
       cat("  >", pastehead(paste0(ceiling(waits), " (", names(waits), ")"), len = len), "\n\n")
 
-      cat(paste0("Prediction Model for Current Time (", time,") w/o \"lm\" Usage:"), "\n")
+      cat(paste0("Prediction Model for Current Time (", time,") ", ifelse(use.lm, "w/", "w/o"), " \"lm\" Usage:"), "\n")
       predmod <- capture.output(print(getPredictionModel(x, time, use.lm = use.lm), print.apl = TRUE))
       cat(paste("  >", head(predmod[-(1:6)], -1)), sep = "\n")
     }

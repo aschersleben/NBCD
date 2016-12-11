@@ -4,7 +4,7 @@
 \alias{print.NBCD}
 \title{Print information about NBCD model.}
 \usage{
-\method{print}{NBCD}(x, size = c("small", "big"), ..., use.lm = FALSE,
+\method{print}{NBCD}(x, size = c("small", "big"), ..., use.lm = FALSE, time,
   len = 3)
 }
 \arguments{
