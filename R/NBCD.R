@@ -57,14 +57,18 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
   checkmate::assertSubset(c("x", "class"), names(new.obs), add = asscoll)
   checkmate::assertDataFrame(new.obs$x, add = asscoll)
   checkmate::reportAssertions(asscoll)
-  checkmate::assert(checkNumeric(max.waiting.time, lower = 0, finite = TRUE,
-                                 len = ncol(new.obs$x), any.missing = FALSE),
-                    checkNumber(max.waiting.time, finite = TRUE),
-                    checkList(max.waiting.time, any.missing = FALSE, len = ncol(new.obs$x)))
-  checkmate::assert(checkNumeric(init.obs, lower = 0, finite = TRUE,
-                                 len = ncol(new.obs$x), any.missing = FALSE),
-                    checkNumber(init.obs, finite = TRUE),
-                    checkList(init.obs, any.missing = FALSE, len = ncol(new.obs$x)))
+  checkmate::assert(checkmate::checkNumeric(max.waiting.time, lower = 0,
+                                            finite = TRUE, len = ncol(new.obs$x),
+                                            any.missing = FALSE),
+                    checkmate::checkNumber(max.waiting.time, finite = TRUE),
+                    checkmate::checkList(max.waiting.time, any.missing = FALSE,
+                                         len = ncol(new.obs$x)))
+  checkmate::assert(checkmate::checkNumeric(init.obs, lower = 0, finite = TRUE,
+                                            len = ncol(new.obs$x),
+                                            any.missing = FALSE),
+                    checkmate::checkNumber(init.obs, finite = TRUE),
+                    checkmate::checkList(init.obs, any.missing = FALSE,
+                                         len = ncol(new.obs$x)))
 
   if (nrow(new.obs$x) > 1) {
     if (verbose)
@@ -143,11 +147,12 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
 
   # Fuege neue Beobachtungen dem Modell hinzu (wird angelegt, falls noch nicht vorhanden)
   if (is.null(curr.model$general$nb2)) {
-    curr.model$general$nb2 <- nb.mod <- nb2(x = new.obs$x, y = new.obs$class, ...)
+    nb.mod <- nb2(x = new.obs$x, y = new.obs$class, ...)
   } else {
-    curr.model$general$nb2 <- nb.mod <- update(object = curr.model$general$nb2,
-                                               newdata = new.obs$x, y = new.obs$class, ...)
+    nb.mod <- update(object = curr.model$general$nb2,
+                     newdata = new.obs$x, y = new.obs$class, ...)
   }
+  for (i in names(curr.model)) curr.model[[i]]$nb2 <- nb.mod
 
   # Falls Listeneintraege fuer die Variablen noch nicht in curr.model enthalten
   missing.vars <- names(nb.mod$tables)[!(names(nb.mod$tables) %in% names(curr.model))]
@@ -157,11 +162,14 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
     curr.model[[i]]$type <- if (is.numeric(new.obs$x[[i]]) & !(i %in% names(model$args$discParams)))
       "numeric" else "factor"
     curr.model[[i]]$init <- TRUE
+    curr.model[[i]]$nobs <- 0
   }
 
   curr.model <- lapply(curr.model, function(x) {
-    if (x$nobs == 0 || is.null(x$nobs))
-      x$nobs <- 1 else x$nobs <- x$nobs + 1
+    if (!is.null(x$nobs)) {
+      if (x$nobs == 0 || is.null(x$nobs))
+        x$nobs <- 1 else x$nobs <- x$nobs + 1
+    } else NULL
     a <- as.character(new.obs$class)
     xtime <- x$time[[a]]
     if (is.null(new.obs$time)) {
@@ -185,7 +193,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
       cat("Obs. in model:", "")
       assign("cat.flag", FALSE, envir = .NBCD)
     }
-    cat(paste0(curr.model$general$nobs, ", "))
+    cat(paste0(sum(curr.model$general$nb2$apriori), ", "))
   }
 
   model$current <- curr.model
@@ -200,7 +208,8 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
          if (curr.model[[i]]$type == "numeric") TRUE else
            (!wait.all.classes | isTRUE(all(sapply(
              curr.model$general$nb2$tables, function(x) all(rowSums(x) > 0))
-           ))))) {
+           )))
+          )) {
 
       if (curr.model[[i]]$init & verbose)
         cat("Init", i, "finished. ")
@@ -236,16 +245,17 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
         if (waiting.time == "fixed") {
           curr.model[[i]]$wait <- max.waiting.time[[i]]
         } else {
-          wt <- max(min.waiting.time, getWaitingTime2(curr.model$general$nb2$tables[[i]]))
+          wt <- max(min.waiting.time, getWaitingTime2(curr.model[[i]]$nb2$tables[[i]]))
           if (!missing(k.waiting.time))
             wt <- wt * k.waiting.time
           curr.model[[i]]$wait <- min(wt, max.waiting.time[[i]])
         }
       }
 
-      old.model[[i]]$nb2 <- curr.model$general$nb2
+      old.model[[i]]$nb2 <- curr.model[[i]]$nb2
       old.model[[i]]$wait <- curr.model[[i]]$wait
       old.model[[i]]$init <- curr.model[[i]]$init
+      model$current[[i]]$init <- FALSE
 
       model <- resetModel(model = model, var.name = i)
       model$old <- old.model
@@ -274,8 +284,7 @@ makeNBCDmodel <- function(new.obs, model, max.waiting.time, init.obs,
 #'
 
 initModel <- function() {
-  list(current = list(general = list(nb2 = NULL, time = list(),
-                                     nobs = 0, init = TRUE)),
+  list(current = list(general = list(nb2 = NULL, time = list(), init = TRUE)),
        old = NULL,
        args = NULL)
 }
@@ -297,8 +306,9 @@ initModel <- function() {
 resetModel <- function(model, var.name) {
   model$current$general$nb2$apriori.list[[var.name]][] <- 0
   model$current$general$nb2$tables[[var.name]][] <- NA
-  model$current$general$nb2$yc[[var.name]] <- lapply(model$current$general$nb2$yc[[var.name]], function(x) NULL)
-  model$current$general$nobs <- 0
+  model$current$general$nb2$yc[[var.name]] <- lapply(model$current$general$nb2$yc[[var.name]],
+                                                     function(x) NULL)
+  # model$current$general$nobs <- 0
   model$current$general$init <- FALSE
   model$current$general$time <- lapply(model$current$general$time,
                                            lapply, function(x) NA)
@@ -638,7 +648,7 @@ print.NBCD <- function(x, size = c("small", "big"), ..., use.lm = FALSE, time,
   initflag <- x$current$general$init
   init <- if (initflag) "# INIT #" else ""
   all.nobs <- sum(x$current$general$nb2$apriori)
-  curr.nobs <- sapply(x$current, "[[", "nobs")[-1]
+  curr.nobs <- unlist(lapply(x$current, "[[", "nobs"))
   if (missing(time)) time <- x$current$general$time.last
 
   old.nobs <- sapply(x$old, "[[", "nobs")
