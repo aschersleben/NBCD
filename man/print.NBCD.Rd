@@ -20,6 +20,9 @@ Currently ignored.}
 \item{use.lm}{\code{[logical]}\cr
 use lm for prediction?}
 
+\item{time}{\code{[numeric(1)]}\cr
+prediction time, if missing: last time}
+
 \item{len}{\code{[numeric(1)]}\cr
 max. number of printed names/numbers/...}
 }

@@ -615,6 +615,9 @@ plot.NBCD <- function(x, time, use.lm = FALSE, ..., n.models = Inf,
 #' @param use.lm \code{[logical]}\cr
 #'   use lm for prediction?
 #'
+#' @param time \code{[numeric(1)]}\cr
+#'   prediction time, if missing: last time
+#'
 #' @param len \code{[numeric(1)]}\cr
 #'   max. number of printed names/numbers/...
 #'
